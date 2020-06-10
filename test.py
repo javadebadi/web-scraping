@@ -1,5 +1,6 @@
 # import packages
 from selenium import webdriver
+import time
 
 # create chrome webdriver browser
 # ***: remember to add other browsers or facilites to download
@@ -30,17 +31,26 @@ class Author:
 
 
 
-author = Author(1679997)
-author = Author(100000)
-author_selector = AuthorCSSSelectors()
-browser = webdriver.Chrome("chromedriver.exe")
-browser.get(author.url)
-if '404' in browser.current_url:
-    print("404 Error: author with id={} does not exist".format())
-    exit()
+authors_id = [10000, 1679997, 1471223, 1023812, 989083]
+request_number = 0
+for author_id in authors_id:
+    request_number += 1
+    print("Request Number = {}".format(request_number))
+    author = Author(author_id)
+    author_selector = AuthorCSSSelectors()
 
+    browser = webdriver.Chrome("chromedriver.exe")
+    browser.get(author.url)
+    browser.implicitly_wait(10)
+    if '404' in browser.current_url:
+        print("HTTP Error 404: author with id={} does not exist".format(author_id))
+        print("\n" + "Moving to next author_id ..." + "\n")
+        continue
 
-author.full_name = browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
-TEMP = browser.find_element_by_css_selector(author_selector.research_areas)
-author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
-print(author)
+    author.full_name = browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
+    TEMP = browser.find_element_by_css_selector(author_selector.research_areas)
+    author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
+
+    browser.close()
+    print(author)
+    #time.sleep(10)  #  10 second delay time for request from website
