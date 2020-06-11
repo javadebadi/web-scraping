@@ -36,6 +36,42 @@ class Author:
         return s
 
 
+class AuthorScraper():
+    def __init__(self, author, path_to_driver = "chromedriver.exe"):
+        self.browser = webdriver.Chrome(path_to_driver)
+        self.browser.get(author.url)
+        self.browser.implicitly_wait(20) # time to wait for webpage to Load
+
+    def author_exists(self):
+        if '404' in self.browser.current_url:
+            print("HTTP Error 404: author with id={} does not exist".format(author.id))
+            print("\n" + "Closing the driver ..." + "\n")
+            self.close()
+            return False
+        else:
+            return True
+
+    def get_full_name(self):
+        full_name = self.browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
+        return full_name
+
+    def get_research_areas(self):
+        try:
+            TEMP = self.browser.find_element_by_css_selector(author_selector.research_areas)
+            research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
+        except:
+            research_areas = []
+        return research_areas
+
+    def get_affiliations_id(self):
+        affiliations_id = self.browser.find_elements_by_css_selector(author_selector.affiliations_id)
+        affiliations_id = [int(t.get_attribute("href")[len(URL_INSTITUTIONS):]) for t in affiliations_id]
+        affiliations_id = list(reversed(affiliations_id))
+        return affiliations_id
+
+    def close(self):
+        self.browser.close()
+
 
 authors_id = [1679997, 1471223, 1023812, 989083, 1000]
 request_number = 0
@@ -45,30 +81,15 @@ for author_id in authors_id:
 
     author = Author(author_id)
     author_selector = AuthorCSSSelectors()
-
-    browser = webdriver.Chrome("chromedriver.exe")
-    browser.get(author.url)
-    browser.implicitly_wait(10)  # time to wait for webpage to Load
-    if '404' in browser.current_url:
-        print("HTTP Error 404: author with id={} does not exist".format(author_id))
-        print("\n" + "Moving to next author_id ..." + "\n")
+    scraper = AuthorScraper(author)
+    if not scraper.author_exists():
         continue
 
-    # author research area
-    author.full_name = browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
-    try:
-        TEMP = browser.find_element_by_css_selector(author_selector.research_areas)
-        author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
-    except:
-        pass
 
+    author.full_name = scraper.get_full_name()
+    author.research_areas = scraper.get_research_areas()
+    author.affiliations_id = scraper.get_affiliations_id()
 
-    # affiliations
-    affiliations_id = browser.find_elements_by_css_selector(author_selector.affiliations_id)
-    affiliations_id = [int(t.get_attribute("href")[len(URL_INSTITUTIONS):]) for t in affiliations_id]
-    print(affiliations_id)
-    author.affiliations_id = list(reversed(affiliations_id))
-
-    browser.close()
+    scraper.close()
     print(author)
     #time.sleep(10)  #  10 second delay time for request from website
