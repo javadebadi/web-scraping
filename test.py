@@ -16,6 +16,7 @@ class AuthorCSSSelectors:
         self.research_areas = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
         self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
+        self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
 
 class Author:
     """
@@ -27,13 +28,15 @@ class Author:
         self.url = URL_AUTHORS + str(id)
         self.research_areas = []
         self.affiliations_id = []
+        self.affiliations_years = []
 
     def __str__(self):
         s = "Authr info:\n"
         s += "id: " + str(self.id) + "\n"
         s += "full name:" + str(self.full_name) + "\n"
         s += "research areas: " + str(self.research_areas) + "\n"
-        s += "affiliations_id :" + str(self.affiliations_id) + "\n"
+        s += "affiliations id :" + str(self.affiliations_id) + "\n"
+        s += "affiliations years:" + str(self.affiliations_years) + "\n"
         return s
 
 
@@ -83,6 +86,12 @@ class AuthorScraper():
         affiliations_id = list(reversed(affiliations_id))
         return affiliations_id
 
+    def get_affiliations_years(self):
+        self._expand_affiliations()
+        affiliations_years = self.browser.find_elements_by_css_selector(author_selector.affiliations_years)
+        affiliations_years = [year.text.split("-") for year in affiliations_years]
+        return affiliations_years
+
     def close(self):
         self.browser.close()
 
@@ -104,6 +113,7 @@ for author_id in authors_id:
     author.full_name = scraper.get_full_name()
     author.research_areas = scraper.get_research_areas()
     author.affiliations_id = scraper.get_affiliations_id()
+    author.affiliations_years = scraper.get_affiliations_years()
 
     scraper.close()
     print(author)
