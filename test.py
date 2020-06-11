@@ -14,6 +14,7 @@ class AuthorCSSSelectors:
     def __init__(self):
         self.full_name = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > h2 > span"
         self.research_areas = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
+        self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
 
 class Author:
@@ -38,9 +39,21 @@ class Author:
 
 class AuthorScraper():
     def __init__(self, author, path_to_driver = "chromedriver.exe"):
+        self.affiliations_expand_status = False
         self.browser = webdriver.Chrome(path_to_driver)
         self.browser.get(author.url)
         self.browser.implicitly_wait(20) # time to wait for webpage to Load
+
+    def _expand_affiliations(self):
+        if self.affiliations_expand_status == False:
+            try:
+                next = self.browser.find_element_by_css_selector(author_selector.affiliations_expand_button)
+                next.click()
+            except:
+                pass
+            self.affiliations_expand_status = True
+        else:
+            return
 
     def author_exists(self):
         if '404' in self.browser.current_url:
@@ -64,6 +77,7 @@ class AuthorScraper():
         return research_areas
 
     def get_affiliations_id(self):
+        self._expand_affiliations()
         affiliations_id = self.browser.find_elements_by_css_selector(author_selector.affiliations_id)
         affiliations_id = [int(t.get_attribute("href")[len(URL_INSTITUTIONS):]) for t in affiliations_id]
         affiliations_id = list(reversed(affiliations_id))
@@ -73,7 +87,8 @@ class AuthorScraper():
         self.browser.close()
 
 
-authors_id = [1679997, 1471223, 1023812, 989083, 1000]
+authors_id = [1679997, 1471223, 1023812, 989083, 1000, 1021261, 1258934]
+authors_id = [1021261, 1258934]
 request_number = 0
 for author_id in authors_id:
     request_number += 1
