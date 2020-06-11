@@ -5,7 +5,9 @@ import time
 # create chrome webdriver browser
 # ***: remember to add other browsers or facilites to download
 
-URL_AUTHORS = "https://inspirehep.net/authors/"
+URL_WEBPAGE = "https://inspirehep.net/"
+URL_AUTHORS = URL_WEBPAGE + "authors/"
+
 
 class AuthorCSSSelectors:
     def __init__(self):
@@ -36,12 +38,13 @@ request_number = 0
 for author_id in authors_id:
     request_number += 1
     print("Request Number = {}".format(request_number))
+
     author = Author(author_id)
     author_selector = AuthorCSSSelectors()
 
     browser = webdriver.Chrome("chromedriver.exe")
     browser.get(author.url)
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(10)  # time to wait for webpage to Load
     if '404' in browser.current_url:
         print("HTTP Error 404: author with id={} does not exist".format(author_id))
         print("\n" + "Moving to next author_id ..." + "\n")
