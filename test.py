@@ -10,6 +10,55 @@ URL_AUTHORS = URL_WEBPAGE + "authors/"
 URL_INSTITUTIONS = URL_WEBPAGE + "institutions/"
 
 
+# helper functions
+def _merge_years_for_two_list(l1, l2):
+    """a private method to merge two list of list where the last element of first list is equal to
+    first element of the second list
+
+    Args:
+        l1 (list): first list
+        l2 (list): second list
+
+    Returns:
+        l (list): merged list of l1 and l2
+
+    Example:
+            >>> _merge_years_for_two_list(['2013', '2014', '2015'],['2015', '2016', '2019'])
+            ['2013', '2014', '2015', '2016', '2019']
+    """
+    if len(l1) == 0:
+        return l2
+    elif len(l2) == 0:
+        return l1
+
+    if l1[-1] == l2[0]:
+        l = l1 + l2[1:]
+    else:
+        l = l1 + [''] +  l2
+    return l
+
+def _merge_years_for_lists_of_list(list_of_lists):
+    """merge list of lists when last element of each list matches with the
+    fist element of the next list
+
+    Args:
+        list_of_lists (list): a list of lists which will be merged
+
+    Returns:
+        l (list): a merged list of elements in lists of the list
+
+    Example:
+        >>> _merge_years_for_lists_of_list([["2010", "2012"], ["2012", "2014"], ["2014", "2020"]])
+        ["2010", "2012", "2014", "2020"]
+    """
+    if len(list_of_lists) < 2:
+        return list_of_lists[0]
+    l = []
+    for i in range(len(list_of_lists)):
+        l = _merge_years_for_two_list(l, list_of_lists[i])
+    return l
+
+
 class AuthorCSSSelectors:
     def __init__(self):
         self.full_name = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > h2 > span"
@@ -89,7 +138,9 @@ class AuthorScraper():
     def get_affiliations_years(self):
         self._expand_affiliations()
         affiliations_years = self.browser.find_elements_by_css_selector(author_selector.affiliations_years)
-        affiliations_years = [year.text.split("-") for year in affiliations_years]
+        affiliations_years = list(reversed([year.text.split("-") for year in affiliations_years]))
+        print(affiliations_years)
+        affiliations_years = _merge_years_for_lists_of_list(affiliations_years)
         return affiliations_years
 
     def close(self):
@@ -97,7 +148,7 @@ class AuthorScraper():
 
 
 authors_id = [1679997, 1471223, 1023812, 989083, 1000, 1021261, 1258934]
-authors_id = [1021261, 1258934]
+#authors_id = [1021261, 1258934]
 request_number = 0
 for author_id in authors_id:
     request_number += 1
