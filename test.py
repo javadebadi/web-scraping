@@ -7,6 +7,7 @@ import time
 
 URL_WEBPAGE = "https://inspirehep.net/"
 URL_AUTHORS = URL_WEBPAGE + "authors/"
+URL_INSTITUTIONS = URL_WEBPAGE + "institutions/"
 
 
 class AuthorCSSSelectors:
@@ -36,7 +37,7 @@ class Author:
 
 
 
-authors_id = [1679997, 1471223, 1023812, 989083]
+authors_id = [1679997, 1471223, 1023812, 989083, 1000]
 request_number = 0
 for author_id in authors_id:
     request_number += 1
@@ -64,7 +65,7 @@ for author_id in authors_id:
 
     # affiliations
     affiliations_id = browser.find_elements_by_css_selector(author_selector.affiliations_id)
-    affiliations_id = [int(t.get_attribute("href")[len("https://inspirehep.net/institutions/"):]) for t in affiliations_id]
+    affiliations_id = [int(t.get_attribute("href")[len(URL_INSTITUTIONS):]) for t in affiliations_id]
     print(affiliations_id)
     author.affiliations_id = list(reversed(affiliations_id))
 
