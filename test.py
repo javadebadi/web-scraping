@@ -50,9 +50,13 @@ for author_id in authors_id:
         print("\n" + "Moving to next author_id ..." + "\n")
         continue
 
+    # author research area
     author.full_name = browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
-    TEMP = browser.find_element_by_css_selector(author_selector.research_areas)
-    author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
+    try:
+        TEMP = browser.find_element_by_css_selector(author_selector.research_areas)
+        author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
+    except:
+        pass
 
     browser.close()
     print(author)
