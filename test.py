@@ -13,6 +13,7 @@ class AuthorCSSSelectors:
     def __init__(self):
         self.full_name = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > h2 > span"
         self.research_areas = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
+        self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
 
 class Author:
     """
@@ -23,17 +24,19 @@ class Author:
         self.full_name = full_name
         self.url = URL_AUTHORS + str(id)
         self.research_areas = []
+        self.affiliations_id = []
 
     def __str__(self):
         s = "Authr info:\n"
         s += "id: " + str(self.id) + "\n"
         s += "full name:" + str(self.full_name) + "\n"
-        s += "research areas: " + str(self.research_areas)
+        s += "research areas: " + str(self.research_areas) + "\n"
+        s += "affiliations_id :" + str(self.affiliations_id) + "\n"
         return s
 
 
 
-authors_id = [10000, 1679997, 1471223, 1023812, 989083]
+authors_id = [1679997, 1471223, 1023812, 989083]
 request_number = 0
 for author_id in authors_id:
     request_number += 1
@@ -57,6 +60,13 @@ for author_id in authors_id:
         author.research_areas = [research_area.text for research_area in TEMP.find_elements_by_tag_name("li")]
     except:
         pass
+
+
+    # affiliations
+    affiliations_id = browser.find_elements_by_css_selector(author_selector.affiliations_id)
+    affiliations_id = [int(t.get_attribute("href")[len("https://inspirehep.net/institutions/"):]) for t in affiliations_id]
+    print(affiliations_id)
+    author.affiliations_id = list(reversed(affiliations_id))
 
     browser.close()
     print(author)
