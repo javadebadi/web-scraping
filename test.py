@@ -2,12 +2,9 @@
 from selenium import webdriver
 import time
 
-# create chrome webdriver browser
-# ***: remember to add other browsers or facilites to download
+from global_vars import *
 
-URL_WEBPAGE = "https://inspirehep.net/"
-URL_AUTHORS = URL_WEBPAGE + "authors/"
-URL_INSTITUTIONS = URL_WEBPAGE + "institutions/"
+# ***: remember to add other browsers or facilites to download
 
 
 # helper functions
