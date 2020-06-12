@@ -55,6 +55,20 @@ def _merge_years_for_lists_of_list(list_of_lists):
         l = _merge_years_for_two_list(l, list_of_lists[i])
     return l
 
+def separate_affiliations_from_pos(text):
+    """A function to find affiliation position from a special type of string
+
+    Args:
+        text (str): a text which has forms of POSTION,AFFILIATION or AFFILIATION
+
+    Returns:
+        pos (str)
+    """
+    pos = text.split(",")[0].upper()
+    if pos in AFFILIATIONS_POSITIONS:
+        return pos
+    else:
+        return ''
 
 class AuthorCSSSelectors:
     def __init__(self):
@@ -63,7 +77,7 @@ class AuthorCSSSelectors:
         self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
         self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
-        self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > strong"
+        self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
 
 class Author:
     """
@@ -147,7 +161,7 @@ class AuthorScraper():
         self._expand_affiliations()
         try:
             affiliations_pos = self.browser.find_elements_by_css_selector(author_selector.affiliations_pos)
-            affiliations_pos = [position.text.split(",")[0] for position in affiliations_pos]
+            affiliations_pos = [separate_affiliations_from_pos(position.text) for position in affiliations_pos]
         except:
             affiliations_pos = []
         affiliations_pos = list(reversed(affiliations_pos))
