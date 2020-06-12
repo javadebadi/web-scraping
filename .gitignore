@@ -2,3 +2,4 @@ chromedriver.exe
 Untitled.ipynb
 .ipynb_checkpoint*
 *.log
+*.pyc
