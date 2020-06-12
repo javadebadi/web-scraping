@@ -63,6 +63,7 @@ class AuthorCSSSelectors:
         self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
         self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
+        self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > strong"
 
 class Author:
     """
@@ -75,6 +76,7 @@ class Author:
         self.research_areas = []
         self.affiliations_id = []
         self.affiliations_years = []
+        self.affiliations_pos = []
 
     def __str__(self):
         s = "Authr info:\n"
@@ -83,6 +85,7 @@ class Author:
         s += "research areas: " + str(self.research_areas) + "\n"
         s += "affiliations id :" + str(self.affiliations_id) + "\n"
         s += "affiliations years:" + str(self.affiliations_years) + "\n"
+        s += "affiliations position:" + str(self.affiliations_pos) + "\n"
         return s
 
 
@@ -91,7 +94,7 @@ class AuthorScraper():
         self.affiliations_expand_status = False
         self.browser = webdriver.Chrome(path_to_driver)
         self.browser.get(author.url)
-        self.browser.implicitly_wait(20) # time to wait for webpage to Load
+        self.browser.implicitly_wait(10) # time to wait for webpage to Load
 
     def _expand_affiliations(self):
         if self.affiliations_expand_status == False:
@@ -140,11 +143,23 @@ class AuthorScraper():
         affiliations_years = _merge_years_for_lists_of_list(affiliations_years)
         return affiliations_years
 
+    def get_affiliations_pos(self):
+        self._expand_affiliations()
+        try:
+            affiliations_pos = self.browser.find_elements_by_css_selector(author_selector.affiliations_pos)
+            affiliations_pos = [position.text.split(",")[0] for position in affiliations_pos]
+        except:
+            affiliations_pos = []
+        affiliations_pos = list(reversed(affiliations_pos))
+        print(affiliations_pos)
+        print("==================")
+        return affiliations_pos
+
     def close(self):
         self.browser.close()
 
 
-authors_id = [1679997, 1471223, 1023812, 989083, 1000, 1021261, 1258934]
+authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
 #authors_id = [1021261, 1258934]
 request_number = 0
 for author_id in authors_id:
@@ -162,6 +177,7 @@ for author_id in authors_id:
     author.research_areas = scraper.get_research_areas()
     author.affiliations_id = scraper.get_affiliations_id()
     author.affiliations_years = scraper.get_affiliations_years()
+    author.affiliations_pos = scraper.get_affiliations_pos()
 
     scraper.close()
     print(author)
