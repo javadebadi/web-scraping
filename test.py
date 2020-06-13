@@ -79,6 +79,10 @@ class AuthorCSSSelectors:
         self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
         self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
 
+        # class name selectors
+        self.show_citation_summary_button = "ant-switch"
+        self.citation_table_class = "__CitationTable__"
+
 author_selector = AuthorCSSSelectors()
 class Author:
     """
@@ -92,6 +96,11 @@ class Author:
         self.affiliations_id = []
         self.affiliations_years = []
         self.affiliations_pos = []
+        self.papers_citeable = 0
+        self.papers_published = 0
+        self.citations_citeable = 0
+        self.citations_published = 0
+
 
     def __str__(self):
         s = "Authr info:\n"
@@ -101,6 +110,11 @@ class Author:
         s += "affiliations id :" + str(self.affiliations_id) + "\n"
         s += "affiliations years:" + str(self.affiliations_years) + "\n"
         s += "affiliations position:" + str(self.affiliations_pos) + "\n"
+        s += "    ===== Citation Table =====" + "\n"
+        s += "         Citeable        Published" + "\n"
+        s += "Papers       {}             {}    ".format(self.papers_citeable, self.papers_published) + "\n"
+        s += "Citation     {}             {}    ".format(self.citations_citeable, self.citations_published) + "\n"
+        s += " ============================================== "
         return s
 
 
@@ -126,7 +140,7 @@ class AuthorScraper():
     def _show_citation_summary(self):
         if self.show_citation_summary_status == False:
             try:
-                next = self.browser.find_element_by_class_name("ant-switch")
+                next = self.browser.find_element_by_class_name(author_selector.show_citation_summary_button)
                 next.click()
             except:
                 pass
@@ -182,6 +196,22 @@ class AuthorScraper():
         print("==================")
         return affiliations_pos
 
+    def get_citation_table(self):
+        self._show_citation_summary()
+        table = self.browser.find_element_by_class_name(author_selector.citation_table_class)
+        table = table.text.split("\n")
+        papers = table[1].split()
+        citations = table[2].split()
+
+        citation_table = dict()
+        citation_table["papers_citeable"]    = papers[len(papers) - 2]
+        citation_table["papers_published"]    = papers[len(papers) - 1]
+        citation_table["citations_citeable"]  = citations[len(citations) - 2]
+        citation_table["citations_published"] = citations[len(citations) - 1]
+        return citation_table
+
+
+
     def close(self):
         self.browser.close()
 
@@ -205,6 +235,11 @@ def main():
         author.affiliations_id = scraper.get_affiliations_id()
         author.affiliations_years = scraper.get_affiliations_years()
         author.affiliations_pos = scraper.get_affiliations_pos()
+        citation_table = scraper.get_citation_table()
+        author.papers_citeable = citation_table["papers_citeable"]
+        author.papers_published = citation_table["papers_published"]
+        author.citations_citeable = citation_table["citations_citeable"]
+        author.citations_published = citation_table["citations_published"]
 
         scraper.close()
         print(author)
