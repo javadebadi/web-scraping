@@ -79,6 +79,7 @@ class AuthorCSSSelectors:
         self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
         self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
 
+author_selector = AuthorCSSSelectors()
 class Author:
     """
     class for authors
@@ -173,26 +174,29 @@ class AuthorScraper():
         self.browser.close()
 
 
-authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
-#authors_id = [1021261, 1258934]
-request_number = 0
-for author_id in authors_id:
-    request_number += 1
-    print("Request Number = {}".format(request_number))
+def main():
+    authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
+    #authors_id = [1021261, 1258934]
+    request_number = 0
+    for author_id in authors_id:
+        request_number += 1
+        print("Request Number = {}".format(request_number))
 
-    author = Author(author_id)
-    author_selector = AuthorCSSSelectors()
-    scraper = AuthorScraper(author)
-    if not scraper.author_exists():
-        continue
+        author = Author(author_id)
+        scraper = AuthorScraper(author)
+        if not scraper.author_exists():
+            continue
 
 
-    author.full_name = scraper.get_full_name()
-    author.research_areas = scraper.get_research_areas()
-    author.affiliations_id = scraper.get_affiliations_id()
-    author.affiliations_years = scraper.get_affiliations_years()
-    author.affiliations_pos = scraper.get_affiliations_pos()
+        author.full_name = scraper.get_full_name()
+        author.research_areas = scraper.get_research_areas()
+        author.affiliations_id = scraper.get_affiliations_id()
+        author.affiliations_years = scraper.get_affiliations_years()
+        author.affiliations_pos = scraper.get_affiliations_pos()
 
-    scraper.close()
-    print(author)
-    #time.sleep(10)  #  10 second delay time for request from website
+        scraper.close()
+        print(author)
+        #time.sleep(10)  #  10 second delay time for request from website
+
+if __name__ == "__main__":
+    main()
