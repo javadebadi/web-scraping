@@ -8,6 +8,35 @@ from global_vars import *
 
 
 # helper functions
+def convert_str_to_int(text = ""):
+    """convert string to number, when the int() function does not work
+    Some numbers in the website are like 3,589 which will not be converted
+    to 3589 when using int() to the string. This function will help to do
+    that.
+
+    Args:
+        text (str): a string of number
+
+    Returns:
+        number (int)
+
+    Example:
+        >>> convert_str_to_int(58)
+        58
+        >>> convert_str_to_int(3,597)
+        3597
+        >>> convert_str_to_int(1,000,000)
+        1000000
+    """
+    l = list(reversed(text.split(",")))
+    number = 0
+    if len(l) == 0:
+        return 0
+    for i in range(len(l)):
+        number += (10**(3*i))*int(l[i]) # the numbers were splitted to 3 digits
+    return number
+
+
 def _merge_years_for_two_list(l1, l2):
     """a private method to merge two list of list where the last element of first list is equal to
     first element of the second list
@@ -204,10 +233,10 @@ class AuthorScraper():
         citations = table[2].split()
 
         citation_table = dict()
-        citation_table["papers_citeable"]    = papers[len(papers) - 2]
-        citation_table["papers_published"]    = papers[len(papers) - 1]
-        citation_table["citations_citeable"]  = citations[len(citations) - 2]
-        citation_table["citations_published"] = citations[len(citations) - 1]
+        citation_table["papers_citeable"]    = convert_str_to_int(papers[len(papers) - 2])
+        citation_table["papers_published"]    = convert_str_to_int(papers[len(papers) - 1])
+        citation_table["citations_citeable"]  = convert_str_to_int(citations[len(citations) - 2])
+        citation_table["citations_published"] = convert_str_to_int(citations[len(citations) - 1])
         return citation_table
 
 
