@@ -129,6 +129,10 @@ class Author:
         self.papers_published = 0
         self.citations_citeable = 0
         self.citations_published = 0
+        self.citation_per_paper_citeable = 0
+        self.citation_per_paper_published = 0
+        self.h_index_citeable = 0
+        self.h_index_published = 0
 
 
     def __str__(self):
@@ -139,10 +143,12 @@ class Author:
         s += "affiliations id :" + str(self.affiliations_id) + "\n"
         s += "affiliations years:" + str(self.affiliations_years) + "\n"
         s += "affiliations position:" + str(self.affiliations_pos) + "\n"
-        s += "    ===== Citation Table =====" + "\n"
-        s += "         Citeable        Published" + "\n"
-        s += "Papers       {}             {}    ".format(self.papers_citeable, self.papers_published) + "\n"
-        s += "Citation     {}             {}    ".format(self.citations_citeable, self.citations_published) + "\n"
+        s += "    ========== Citation Table ==========" + "\n"
+        s += "                 Citeable        Published" + "\n"
+        s += "Papers              {}              {}     ".format(self.papers_citeable, self.papers_published) + "\n"
+        s += "Citation            {}              {}     ".format(self.citations_citeable, self.citations_published) + "\n"
+        s += "h index             {}              {}     ".format(self.h_index_citeable, self.h_index_published) + "\n"
+        s += "Citation per Paper  {}              {}     ".format(self.citation_per_paper_citeable, self.citation_per_paper_published) + "\n"
         s += " ============================================== "
         return s
 
@@ -231,12 +237,19 @@ class AuthorScraper():
         table = table.text.split("\n")
         papers = table[1].split()
         citations = table[2].split()
+        h_index = table[3].split()
+        citation_per_paper = table[4].split()
 
         citation_table = dict()
-        citation_table["papers_citeable"]    = convert_str_to_int(papers[len(papers) - 2])
-        citation_table["papers_published"]    = convert_str_to_int(papers[len(papers) - 1])
+        citation_table["papers_citeable"]  = convert_str_to_int(papers[len(papers) - 2])
+        citation_table["papers_published"] = convert_str_to_int(papers[len(papers) - 1])
         citation_table["citations_citeable"]  = convert_str_to_int(citations[len(citations) - 2])
         citation_table["citations_published"] = convert_str_to_int(citations[len(citations) - 1])
+        citation_table["h_index_citeable"]  = convert_str_to_int(h_index[len(h_index) - 2])
+        citation_table["h_index_published"] = convert_str_to_int(h_index[len(h_index) - 1])
+        citation_table["citation_per_paper_citeable"]  = citation_per_paper[len(citation_per_paper) - 2]
+        citation_table["citation_per_paper_published"] = citation_per_paper[len(citation_per_paper) - 1]
+
         return citation_table
 
 
@@ -269,6 +282,10 @@ def main():
         author.papers_published = citation_table["papers_published"]
         author.citations_citeable = citation_table["citations_citeable"]
         author.citations_published = citation_table["citations_published"]
+        author.h_index_citeable = citation_table["h_index_citeable"]
+        author.h_index_published = citation_table["h_index_published"]
+        author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
+        author.citation_per_paper_published = citation_table["citation_per_paper_published"]
 
         scraper.close()
         print(author)
