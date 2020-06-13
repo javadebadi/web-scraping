@@ -107,6 +107,7 @@ class Author:
 class AuthorScraper():
     def __init__(self, author, path_to_driver = "chromedriver.exe"):
         self.affiliations_expand_status = False
+        self.show_citation_summary_status = False
         self.browser = webdriver.Chrome(path_to_driver)
         self.browser.get(author.url)
         self.browser.implicitly_wait(10) # time to wait for webpage to Load
@@ -119,6 +120,17 @@ class AuthorScraper():
             except:
                 pass
             self.affiliations_expand_status = True
+        else:
+            return
+
+    def _show_citation_summary(self):
+        if self.show_citation_summary_status == False:
+            try:
+                next = self.browser.find_element_by_class_name("ant-switch")
+                next.click()
+            except:
+                pass
+            self.show_citation_summary_status == True
         else:
             return
 
