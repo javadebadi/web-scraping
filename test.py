@@ -1,5 +1,9 @@
 # import packages
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 from global_vars import *
@@ -113,6 +117,11 @@ class AuthorCSSSelectors:
         self.citation_table_class = "__CitationTable__"
         self.papers_list_class = "mv2"
 
+        # css selectors
+        self.next_page_disabled_attribute = "aria-disabled"
+        self.next_page_existence = "li[title='Next Page']"
+        self.next_page = "li[class='ant-pagination-next'] > a"
+
 author_selector = AuthorCSSSelectors()
 class Author:
     """
@@ -151,8 +160,8 @@ class Author:
         s += "Citation            {}              {}     ".format(self.citations_citeable, self.citations_published) + "\n"
         s += "h index             {}              {}     ".format(self.h_index_citeable, self.h_index_published) + "\n"
         s += "Citation per Paper  {}              {}     ".format(self.citation_per_paper_citeable, self.citation_per_paper_published) + "\n"
-        s += " ||||||>>>>> List of 10 most recent author's papers id: " + "\n"
-        s += str(self.papers_id_list[:10]) + "\n"
+        s += " ||||||>>>>> List of author's papers id: " + "\n"
+        s += str(self.papers_id_list) + "\n"
         s += " ============================================== "
         return s
 
@@ -163,7 +172,7 @@ class AuthorScraper():
         self.show_citation_summary_status = False
         self.browser = webdriver.Chrome(path_to_driver)
         self.browser.get(author.url)
-        self.browser.implicitly_wait(10) # time to wait for webpage to Load
+        self.browser.implicitly_wait(20) # time to wait for webpage to Load
 
     def _expand_affiliations(self):
         if self.affiliations_expand_status == False:
@@ -256,11 +265,42 @@ class AuthorScraper():
 
         return citation_table
 
+    def _next_page_exists(self):
+        try:
+            x = self.browser.find_elements_by_css_selector("ul[class='__SearchPagination__']")
+            if len(x) == 0:
+                return False
+        except:
+            return False
+        try:
+            value = self.browser.find_elements_by_css_selector(author_selector.next_page_existence)
+            print(len(value))
+            value = value[0].get_attribute(author_selector.next_page_disabled_attribute)
+            if value == 'false':
+                print("TRUE RUE")
+                return True
+            if value == 'true':
+                return False
+        except:
+            return False
+
+    def navigate_to_next_page(self):
+        if self._next_page_exists():
+            button = self.browser.find_elements_by_css_selector(author_selector.next_page)[0]
+            self.browser.implicitly_wait(10)
+            ActionChains(self.browser).move_to_element(button).click(button).perform()
+
     def get_papers_id_list(self):
-        papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)
-        papers_list = [p.find_element_by_tag_name("a") for p in papers_list]
-        papers_list = [p.get_attribute("href") for p in papers_list]
-        return [int(p.replace(URL_LITERATURE, "")) for p in papers_list]
+        papers_id_list = []
+        while True:
+            papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)
+            papers_list = [p.find_element_by_tag_name("a") for p in papers_list]
+            papers_list = [p.get_attribute("href") for p in papers_list]
+            papers_id_list.extend([int(p.replace(URL_LITERATURE, "")) for p in papers_list])
+            if not self._next_page_exists():
+                return papers_id_list
+            self.navigate_to_next_page()
+        return papers_id_list
 
 
     def close(self):
@@ -295,7 +335,7 @@ def main():
         author.h_index_published = citation_table["h_index_published"]
         author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
         author.citation_per_paper_published = citation_table["citation_per_paper_published"]
-        author.papers_id_list = scraper.get_papers_id_list()
+        author.papers_id_list = scraper.get_papers_id_list()[:author.papers_citeable]
 
         scraper.close()
         print(author)
