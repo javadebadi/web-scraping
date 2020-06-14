@@ -111,6 +111,7 @@ class AuthorCSSSelectors:
         # class name selectors
         self.show_citation_summary_button = "ant-switch"
         self.citation_table_class = "__CitationTable__"
+        self.papers_list_class = "mv2"
 
 author_selector = AuthorCSSSelectors()
 class Author:
@@ -133,6 +134,7 @@ class Author:
         self.citation_per_paper_published = 0
         self.h_index_citeable = 0
         self.h_index_published = 0
+        self.papers_id_list = []
 
 
     def __str__(self):
@@ -149,6 +151,8 @@ class Author:
         s += "Citation            {}              {}     ".format(self.citations_citeable, self.citations_published) + "\n"
         s += "h index             {}              {}     ".format(self.h_index_citeable, self.h_index_published) + "\n"
         s += "Citation per Paper  {}              {}     ".format(self.citation_per_paper_citeable, self.citation_per_paper_published) + "\n"
+        s += " ||||||>>>>> List of 10 most recent author's papers id: " + "\n"
+        s += str(self.papers_id_list[:10]) + "\n"
         s += " ============================================== "
         return s
 
@@ -252,6 +256,11 @@ class AuthorScraper():
 
         return citation_table
 
+    def get_papers_id_list(self):
+        papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)
+        papers_list = [p.find_element_by_tag_name("a") for p in papers_list]
+        papers_list = [p.get_attribute("href") for p in papers_list]
+        return [int(p.replace(URL_LITERATURE, "")) for p in papers_list]
 
 
     def close(self):
@@ -286,6 +295,7 @@ def main():
         author.h_index_published = citation_table["h_index_published"]
         author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
         author.citation_per_paper_published = citation_table["citation_per_paper_published"]
+        author.papers_id_list = scraper.get_papers_id_list()
 
         scraper.close()
         print(author)
