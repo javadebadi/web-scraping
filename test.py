@@ -7,6 +7,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 from global_vars import *
+from helper_functions import *
 
 # ***: remember to add other browsers or facilites to download
 
