@@ -19,7 +19,7 @@ class AuthorCSSSelectors:
         self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
         self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
-        self.affiliations_pos =   "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
+        self.affiliations_pos = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
 
         # class name selectors
         self.show_citation_summary_button = "ant-switch"
@@ -31,12 +31,15 @@ class AuthorCSSSelectors:
         self.next_page_existence = "li[title='Next Page']"
         self.next_page = "li[class='ant-pagination-next'] > a"
 
+
 author_selector = AuthorCSSSelectors()
+
+
 class Author:
     """
     class for authors
     """
-    def __init__(self, id = 0, full_name = ""):
+    def __init__(self, id=0, full_name=""):
         self.id = id
         self.full_name = full_name
         self.url = URL_AUTHORS + str(id)
@@ -53,7 +56,6 @@ class Author:
         self.h_index_citeable = 0
         self.h_index_published = 0
         self.papers_id_list = []
-
 
     def __str__(self):
         s = "Authr info:\n"
@@ -76,16 +78,16 @@ class Author:
 
 
 class AuthorScraper():
-    def __init__(self, author, path_to_driver = "chromedriver.exe"):
+    def __init__(self, author, path_to_driver="chromedriver.exe"):
         self.navigation_page = 1
         self.affiliations_expand_status = False
         self.show_citation_summary_status = False
         self.browser = webdriver.Chrome(path_to_driver)
         self.browser.get(author.url)
-        self.browser.implicitly_wait(20) # time to wait for webpage to Load
+        self.browser.implicitly_wait(20)  # time to wait for webpage to Load
 
     def _expand_affiliations(self):
-        if self.affiliations_expand_status == False:
+        if self.affiliations_expand_status is False:
             try:
                 next = self.browser.find_element_by_css_selector(author_selector.affiliations_expand_button)
                 next.click()
@@ -96,13 +98,13 @@ class AuthorScraper():
             return
 
     def _show_citation_summary(self):
-        if self.show_citation_summary_status == False:
+        if self.show_citation_summary_status is False:
             try:
                 next = self.browser.find_element_by_class_name(author_selector.show_citation_summary_button)
                 next.click()
             except:
                 pass
-            self.show_citation_summary_status == True
+            self.show_citation_summary_status = True
         else:
             return
 
@@ -147,7 +149,8 @@ class AuthorScraper():
         try:
             affiliations_pos = self.browser.find_elements_by_css_selector(author_selector.affiliations_pos)
             affiliations_pos = [separate_affiliations_from_pos(position.text) for position in affiliations_pos]
-        except:
+        except ValueError:
+            print("No affiliations are avaible for the author ...")
             affiliations_pos = []
         affiliations_pos = list(reversed(affiliations_pos))
         print(affiliations_pos)
@@ -164,13 +167,13 @@ class AuthorScraper():
         citation_per_paper = table[4].split()
 
         citation_table = dict()
-        citation_table["papers_citeable"]  = convert_str_to_int(papers[len(papers) - 2])
+        citation_table["papers_citeable"] = convert_str_to_int(papers[len(papers) - 2])
         citation_table["papers_published"] = convert_str_to_int(papers[len(papers) - 1])
-        citation_table["citations_citeable"]  = convert_str_to_int(citations[len(citations) - 2])
+        citation_table["citations_citeable"] = convert_str_to_int(citations[len(citations) - 2])
         citation_table["citations_published"] = convert_str_to_int(citations[len(citations) - 1])
-        citation_table["h_index_citeable"]  = convert_str_to_int(h_index[len(h_index) - 2])
+        citation_table["h_index_citeable"] = convert_str_to_int(h_index[len(h_index) - 2])
         citation_table["h_index_published"] = convert_str_to_int(h_index[len(h_index) - 1])
-        citation_table["citation_per_paper_citeable"]  = citation_per_paper[len(citation_per_paper) - 2]
+        citation_table["citation_per_paper_citeable"] = citation_per_paper[len(citation_per_paper) - 2]
         citation_table["citation_per_paper_published"] = citation_per_paper[len(citation_per_paper) - 1]
 
         return citation_table
@@ -181,9 +184,9 @@ class AuthorScraper():
         self.browser.implicitly_wait(10)
         time.sleep(10)
         self.navigation_page += 1
-        #ActionChains(self.browser).move_to_element(button).click(button).perform()
+        # ActionChains(self.browser).move_to_element(button).click(button).perform()
 
-    def get_papers_id_list_in_page(self, number = MAX_ITEMS_IN_PAGE):
+    def get_papers_id_list_in_page(self, number=MAX_ITEMS_IN_PAGE):
         """gets papers id in author profile which are in one page"""
         papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)[:number]
         papers_list = [p.find_element_by_tag_name("a").get_attribute("href") for p in papers_list]
@@ -209,7 +212,6 @@ class AuthorScraper():
             print(papers_id_list_in_page)
 
         return papers_id_list
-
 
     def close(self):
         self.browser.close()
@@ -240,19 +242,18 @@ def scrape_author(author):
 
     scraper.close()
 
+
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
-    #authors_id = [1021261, 1258934]
     request_number = 0
     for author_id in authors_id:
         request_number += 1
         print("Request Number = {}".format(request_number))
-
         author = Author(author_id)
         scrape_author(author)
 
         print(author)
-        #time.sleep(10)  #  10 second delay time for request from website
+
 
 if __name__ == "__main__":
     main()
