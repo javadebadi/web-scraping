@@ -183,7 +183,7 @@ class AuthorScraper():
         self.navigation_page += 1
         #ActionChains(self.browser).move_to_element(button).click(button).perform()
 
-    def get_papers_id_list_in_page(self, number = 25):
+    def get_papers_id_list_in_page(self, number = MAX_ITEMS_IN_PAGE):
         """gets papers id in author profile which are in one page"""
         papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)[:number]
         papers_list = [p.find_element_by_tag_name("a").get_attribute("href") for p in papers_list]
@@ -215,6 +215,31 @@ class AuthorScraper():
         self.browser.close()
 
 
+def scrape_author(author):
+    """scrape authors profile and fill its information in
+    author object from Author class"""
+    scraper = AuthorScraper(author)
+    if not scraper.author_exists():
+        return
+
+    author.full_name = scraper.get_full_name()
+    author.research_areas = scraper.get_research_areas()
+    author.affiliations_id = scraper.get_affiliations_id()
+    author.affiliations_years = scraper.get_affiliations_years()
+    author.affiliations_pos = scraper.get_affiliations_pos()
+    citation_table = scraper.get_citation_table()
+    author.papers_citeable = citation_table["papers_citeable"]
+    author.papers_published = citation_table["papers_published"]
+    author.citations_citeable = citation_table["citations_citeable"]
+    author.citations_published = citation_table["citations_published"]
+    author.h_index_citeable = citation_table["h_index_citeable"]
+    author.h_index_published = citation_table["h_index_published"]
+    author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
+    author.citation_per_paper_published = citation_table["citation_per_paper_published"]
+    author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
+
+    scraper.close()
+
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
     #authors_id = [1021261, 1258934]
@@ -224,29 +249,8 @@ def main():
         print("Request Number = {}".format(request_number))
 
         author = Author(author_id)
-        scraper = AuthorScraper(author)
-        if not scraper.author_exists():
-            continue
+        scrape_author(author)
 
-
-        author.full_name = scraper.get_full_name()
-        author.research_areas = scraper.get_research_areas()
-        author.affiliations_id = scraper.get_affiliations_id()
-        author.affiliations_years = scraper.get_affiliations_years()
-        author.affiliations_pos = scraper.get_affiliations_pos()
-        citation_table = scraper.get_citation_table()
-        author.papers_citeable = citation_table["papers_citeable"]
-        author.papers_published = citation_table["papers_published"]
-        author.citations_citeable = citation_table["citations_citeable"]
-        author.citations_published = citation_table["citations_published"]
-        author.h_index_citeable = citation_table["h_index_citeable"]
-        author.h_index_published = citation_table["h_index_published"]
-        author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
-        author.citation_per_paper_published = citation_table["citation_per_paper_published"]
-        author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
-
-
-        scraper.close()
         print(author)
         #time.sleep(10)  #  10 second delay time for request from website
 
