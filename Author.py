@@ -42,7 +42,7 @@ def convert_str_to_int(text = ""):
     return number
 
 
-def _merge_years_for_two_list(l1, l2):
+def merge_years_for_two_list(l1, l2):
     """a private method to merge two list of list where the last element of first list is equal to
     first element of the second list
 
@@ -54,7 +54,7 @@ def _merge_years_for_two_list(l1, l2):
         l (list): merged list of l1 and l2
 
     Example:
-            >>> _merge_years_for_two_list(['2013', '2014', '2015'],['2015', '2016', '2019'])
+            >>> merge_years_for_two_list(['2013', '2014', '2015'],['2015', '2016', '2019'])
             ['2013', '2014', '2015', '2016', '2019']
     """
     if len(l1) == 0:
@@ -68,7 +68,7 @@ def _merge_years_for_two_list(l1, l2):
         l = l1 + [''] +  l2
     return l
 
-def _merge_years_for_lists_of_list(list_of_lists):
+def merge_years_for_lists_of_list(list_of_lists):
     """merge list of lists when last element of each list matches with the
     fist element of the next list
 
@@ -79,14 +79,14 @@ def _merge_years_for_lists_of_list(list_of_lists):
         l (list): a merged list of elements in lists of the list
 
     Example:
-        >>> _merge_years_for_lists_of_list([["2010", "2012"], ["2012", "2014"], ["2014", "2020"]])
+        >>> merge_years_for_lists_of_list([["2010", "2012"], ["2012", "2014"], ["2014", "2020"]])
         ["2010", "2012", "2014", "2020"]
     """
     if len(list_of_lists) < 2:
         return list_of_lists[0]
     l = []
     for i in range(len(list_of_lists)):
-        l = _merge_years_for_two_list(l, list_of_lists[i])
+        l = merge_years_for_two_list(l, list_of_lists[i])
     return l
 
 def separate_affiliations_from_pos(text):
@@ -231,7 +231,7 @@ class AuthorScraper():
         affiliations_years = self.browser.find_elements_by_css_selector(author_selector.affiliations_years)
         affiliations_years = list(reversed([year.text.split("-") for year in affiliations_years]))
         print(affiliations_years)
-        affiliations_years = _merge_years_for_lists_of_list(affiliations_years)
+        affiliations_years = merge_years_for_lists_of_list(affiliations_years)
         return affiliations_years
 
     def get_affiliations_pos(self):
