@@ -289,6 +289,7 @@ class AuthorScraper():
 
         for i in range(n_loop):
             papers_id_list_in_page = self.get_papers_id_list_in_page(max_papers_in_page)
+            print("papers number {} to {}".format(max_papers_in_page*i, max_papers_in_page*(i + 1)))
             print(papers_id_list_in_page)
             papers_id_list.extend(papers_id_list_in_page)
             self.navigate_to_next_page()
