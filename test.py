@@ -168,6 +168,7 @@ class Author:
 
 class AuthorScraper():
     def __init__(self, author, path_to_driver = "chromedriver.exe"):
+        self.navigation_page = 1
         self.affiliations_expand_status = False
         self.show_citation_summary_status = False
         self.browser = webdriver.Chrome(path_to_driver)
@@ -265,41 +266,38 @@ class AuthorScraper():
 
         return citation_table
 
-    def _next_page_exists(self):
-        try:
-            x = self.browser.find_elements_by_css_selector("ul[class='__SearchPagination__']")
-            if len(x) == 0:
-                return False
-        except:
-            return False
-        try:
-            value = self.browser.find_elements_by_css_selector(author_selector.next_page_existence)
-            print(len(value))
-            value = value[0].get_attribute(author_selector.next_page_disabled_attribute)
-            if value == 'false':
-                print("TRUE RUE")
-                return True
-            if value == 'true':
-                return False
-        except:
-            return False
-
     def navigate_to_next_page(self):
-        if self._next_page_exists():
-            button = self.browser.find_elements_by_css_selector(author_selector.next_page)[0]
-            self.browser.implicitly_wait(10)
-            ActionChains(self.browser).move_to_element(button).click(button).perform()
+        button = self.browser.find_element_by_css_selector(author_selector.next_page)
+        button.click()
+        self.browser.implicitly_wait(10)
+        time.sleep(10)
+        self.navigation_page += 1
+        #ActionChains(self.browser).move_to_element(button).click(button).perform()
 
-    def get_papers_id_list(self):
+    def get_papers_id_list_in_page(self, number = 25):
+        """gets papers id in author profile which are in one page"""
+        papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)[:number]
+        papers_list = [p.find_element_by_tag_name("a").get_attribute("href") for p in papers_list]
+        papers_list = ([int(p.replace(URL_LITERATURE, "")) for p in papers_list])
+        return papers_list
+
+    def get_papers_id_list(self, papers_citeable):
         papers_id_list = []
-        while True:
-            papers_list = self.browser.find_elements_by_class_name(author_selector.papers_list_class)
-            papers_list = [p.find_element_by_tag_name("a") for p in papers_list]
-            papers_list = [p.get_attribute("href") for p in papers_list]
-            papers_id_list.extend([int(p.replace(URL_LITERATURE, "")) for p in papers_list])
-            if not self._next_page_exists():
-                return papers_id_list
+        max_papers_in_page = 25
+        n_loop = papers_citeable // max_papers_in_page
+        n_remaining = papers_citeable % max_papers_in_page
+
+        for i in range(n_loop):
+            papers_id_list_in_page = self.get_papers_id_list_in_page(max_papers_in_page)
+            print(papers_id_list_in_page)
+            papers_id_list.extend(papers_id_list_in_page)
             self.navigate_to_next_page()
+
+        if n_remaining != 0:
+            papers_id_list_in_page = self.get_papers_id_list_in_page(n_remaining)
+            papers_id_list.extend(papers_id_list_in_page)
+            print(papers_id_list_in_page)
+
         return papers_id_list
 
 
@@ -335,7 +333,8 @@ def main():
         author.h_index_published = citation_table["h_index_published"]
         author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
         author.citation_per_paper_published = citation_table["citation_per_paper_published"]
-        author.papers_id_list = scraper.get_papers_id_list()[:author.papers_citeable]
+        author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
+
 
         scraper.close()
         print(author)
