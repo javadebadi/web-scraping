@@ -19,3 +19,5 @@ AFFILIATIONS_POSITIONS = [
         "MA",
         "VISITOR"
 ]
+
+MAX_ITEMS_IN_PAGE = 25
