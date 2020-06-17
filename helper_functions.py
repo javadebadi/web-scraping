@@ -1,3 +1,5 @@
+from global_vars import *
+
 # helper functions
 def convert_str_to_int(text=""):
     """convert string to number, when the int() function does not work

@@ -14,12 +14,14 @@ from helper_functions import *
 
 class AuthorCSSSelectors:
     def __init__(self):
-        self.full_name = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > h2 > span"
-        self.research_areas = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
-        self.affiliations_expand_button = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > button"
-        self.affiliations_id = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2) > a"
-        self.affiliations_years = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(1)"
-        self.affiliations_pos = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > div:nth-child(2)"
+        self.author_css = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > "
+        self.full_name = self.author_css + "h2 > span"
+        self.research_areas = self.author_css + "div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
+        self.affiliations_expand_button = self.author_css + "div.ant-row.ant-row-space-between > div:nth-child(2) > button"
+        self.affiliations_css = self.author_css + "div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > "
+        self.affiliations_id = self.affiliations_css + "div:nth-child(2) > a"
+        self.affiliations_years = self.affiliations_css + "div:nth-child(1)"
+        self.affiliations_pos = self.affiliations_css + "div:nth-child(2)"
 
         # class name selectors
         self.show_citation_summary_button = "ant-switch"
