@@ -6,7 +6,7 @@ CREATE DATABASE IF NOT EXISTS hep DEFAULT CHARSET = utf8;
 USE hep;
 
 DROP TABLE IF EXISTS author;
-CREATE TABLE author(
+CREATE TABLE IF NOT EXISTS author(
   id INT PRIMARY KEY,
   full_name VARCHAR(255),
   BS_id INT,
@@ -32,6 +32,6 @@ CREATE TABLE author(
   citation_per_paper_published DOUBLE,
   citation_per_paper_citeable DOUBLE,
   papers_id VARCHAR(10000)
-);
+) ENGINE = InnoDB;
 
 SELECT * FROM author;
