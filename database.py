@@ -30,7 +30,15 @@ class DatabaseCreator:
             # Create a table with the appropriate Columns
             Authors = Table('Authors', self.metadata,
                 Column('Id', Integer(), primary_key=True, nullable=False),
-                Column('Name', String(255))
+                Column('Name', String(255)),
+                Column('BS_id', Integer(), default=-1),
+                Column('MS_id', Integer(), default=-1),
+                Column('PhD_id', Integer(), default=-1),
+                Column('PD1_id', Integer(), default=-1),
+                Column('PD2_id', Integer(), default=-1),
+                Column('PD3_id', Integer(), default=-1),
+                Column('PD4_id', Integer(), default=-1),
+                Column('Senior_id', Integer(), default=-1)
                 )
 
 
@@ -42,8 +50,12 @@ class DatabaseAccessor:
         self.Authors = Table('Authors', self.metadata, autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
 
-    def insert_Author(self, Id, Name):
-        stmt = insert(self.Authors).values(Id=Id, Name=Name)
+    def insert_Author(self, Id, Name, BS_id=-1, MS_id=-1, PhD_id=-1, PD1_id=-1,
+                    PD2_id=-1, PD3_id=-1, PD4_id=-1, Senior_id=-1):
+        stmt = insert(self.Authors).values(Id=Id,Name=Name,
+                                    BS_id=BS_id, MS_id=MS_id, PhD_id=PhD_id,
+                                    PD1_id=PD1_id, PD2_id=PD2_id, PD3_id=PD3_id,
+                                    PD4_id=PD4_id, Senior_id=Senior_id)
         results = self.connection.execute(stmt)
         print(results.rowcount)
 
