@@ -7,8 +7,6 @@ from sqlalchemy import select, insert
 from sqlalchemy import String, Integer, Boolean, Float, Date
 from sqlalchemy_utils import create_database, database_exists
 
-os.remove("hep.sqlite")
-
 # create engine
 engine = create_engine(DB_PATH)
 
@@ -39,7 +37,7 @@ class DatabaseCreator:
 class DatabaseAccessor:
 
     def __init__(self, db_path=DB_PATH):
-        self.engine = create_engine(DB_PATH)  # create engien
+        self.engine = create_engine(DB_PATH)  # create engine
         self.metadata = MetaData()
         self.Authors = Table('Authors', self.metadata, autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
@@ -49,8 +47,11 @@ class DatabaseAccessor:
         results = self.connection.execute(stmt)
         print(results.rowcount)
 
+    def close(self):
+        self.connection.close()
+        engine.dispose()
+
 if __name__ == "__main__":
+    os.remove("hep.sqlite")
     creator = DatabaseCreator()
     creator.create_all_tables()
-    db = DatabaseAccessor()
-    db.insert_Author("100000", "Javad Ebadi")
