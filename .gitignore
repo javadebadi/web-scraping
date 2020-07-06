@@ -3,3 +3,5 @@ Untitled.ipynb
 .ipynb_checkpoint*
 *.log
 *.pyc
+Authors.csv
+hep.sqlite
