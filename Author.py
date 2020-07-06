@@ -65,7 +65,7 @@ class Author:
         try:
             db.insert_Author(Id=self.id, Name=self.full_name)
         except:
-            print("Author with id = {} is already in databse, update instead of insert".format(self.id))
+            print("Author with id = {} is already in database, update instead of insert".format(self.id))
         db.close()
 
     def __str__(self):
