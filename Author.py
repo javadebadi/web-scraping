@@ -60,10 +60,20 @@ class Author:
         self.h_index_published = 0
         self.papers_id_list = []
 
+    def get_PhD_id(self):
+        assert( len(self.affiliations_id) == len(self.affiliations_pos) )
+        for i in range(len(self.affiliations_pos)):
+            if self.affiliations_pos[i].upper() == "PHD":
+                return self.affiliations_id[i]
+        return -1
+
     def insert_to_database(self):
         db = DatabaseAccessor()
         try:
-            db.insert_Author(Id=self.id, Name=self.full_name)
+            db.insert_Author(Id=self.id,
+                             Name=self.full_name,
+                             PhD_id=self.get_PhD_id()
+                             )
         except:
             print("Author with id = {} is already in database, update instead of insert".format(self.id))
         db.close()
@@ -256,6 +266,8 @@ def scrape_author(author):
 
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
+    authors_id = [1679997, 1471223]
+    authors_id = [1021261]
     request_number = 0
     for author_id in authors_id:
         request_number += 1
