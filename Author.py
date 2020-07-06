@@ -8,6 +8,7 @@ import time
 
 from global_vars import *
 from helper_functions import *
+from database import *
 
 # ***: remember to add other browsers or facilites to download
 
@@ -58,6 +59,14 @@ class Author:
         self.h_index_citeable = 0
         self.h_index_published = 0
         self.papers_id_list = []
+
+    def insert_to_database(self):
+        db = DatabaseAccessor()
+        try:
+            db.insert_Author(Id=self.id, Name=self.full_name)
+        except:
+            print("Author with id = {} is already in databse, update instead of insert".format(self.id))
+        db.close()
 
     def __str__(self):
         s = "Authr info:\n"
@@ -255,6 +264,7 @@ def main():
         scrape_author(author)
 
         print(author)
+        author.insert_to_database()
 
 
 if __name__ == "__main__":
