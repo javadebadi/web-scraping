@@ -3,6 +3,7 @@
 from global_vars import *
 import os
 from sqlalchemy import create_engine, MetaData, Table, Column
+from sqlalchemy import select, insert
 from sqlalchemy import String, Integer, Boolean, Float, Date
 from sqlalchemy_utils import create_database, database_exists
 
@@ -41,7 +42,15 @@ class DatabaseAccessor:
         self.engine = create_engine(DB_PATH)  # create engien
         self.metadata = MetaData()
         self.Authors = Table('Authors', self.metadata, autoload=True, autoload_with=engine)
+        self.connection = self.engine.connect()
+
+    def insert_Author(self, Id, Name):
+        stmt = insert(self.Authors).values(Id=Id, Name=Name)
+        results = self.connection.execute(stmt)
+        print(results.rowcount)
 
 if __name__ == "__main__":
     creator = DatabaseCreator()
     creator.create_all_tables()
+    db = DatabaseAccessor()
+    db.insert_Author("100000", "Javad Ebadi")
