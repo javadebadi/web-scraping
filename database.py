@@ -18,7 +18,7 @@ if not database_exists(engine.url):
 class DatabaseCreator:
 
     def __init__(self, db_path=DB_PATH):
-        self.engine = create_engine(DB_PATH)  # create engien
+        self.engine = create_engine(DB_PATH)  # create engine
         self.metadata = MetaData()
 
     def create_all_tables(self):

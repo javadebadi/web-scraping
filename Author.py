@@ -59,20 +59,42 @@ class Author:
         self.h_index_citeable = 0
         self.h_index_published = 0
         self.papers_id_list = []
+        self.affiliations_pos_id = {"BS":-1, "MS":-1, "PhD":-1, "PD1":-1, "PD2":-1, "PD3":-1, "PD4":-1, "Senior":-1}
 
-    def get_PhD_id(self):
+    def _get_affiliations_pos_id(self):
         assert( len(self.affiliations_id) == len(self.affiliations_pos) )
+        PD_count = 1  # since an author usually goes to several postdcs
+                      # we need to track number of postdocs
         for i in range(len(self.affiliations_pos)):
-            if self.affiliations_pos[i].upper() == "PHD":
-                return self.affiliations_id[i]
-        return -1
+            if self.affiliations_pos[i].upper() == "UNDERGRADUATE" or self.affiliations_pos[i].upper() == "BS":
+                self.affiliations_pos_id["BS"] = self.affiliations_id[i]
+            if self.affiliations_pos[i].upper() == "MASTER" or self.affiliations_pos[i].upper() == "MS":
+                self.affiliations_pos_id["MS"] = self.affiliations_id[i]
+            elif self.affiliations_pos[i].upper() == "PHD":
+                self.affiliations_pos_id["PhD"] = self.affiliations_id[i]
+            elif self.affiliations_pos[i].upper() == "POSTDOC":
+                self.affiliations_pos_id["PD"+str(PD_count)] = self.affiliations_id[i]
+                PD_count += 1
+            elif self.affiliations_pos[i].upper() == "SENIOR":
+                self.affiliations_pos_id["Senior"] = self.affiliations_id[i]
+
+    def finalize(self):
+        self._get_affiliations_pos_id()
 
     def insert_to_database(self):
+        self.finalize()
         db = DatabaseAccessor()
         try:
             db.insert_Author(Id=self.id,
                              Name=self.full_name,
-                             PhD_id=self.get_PhD_id()
+                             BS_id=self.affiliations_pos_id["BS"],
+                             MS_id=self.affiliations_pos_id["MS"],
+                             PhD_id=self.affiliations_pos_id["PhD"],
+                             PD1_id=self.affiliations_pos_id["PD1"],
+                             PD2_id=self.affiliations_pos_id["PD2"],
+                             PD3_id=self.affiliations_pos_id["PD3"],
+                             PD4_id=self.affiliations_pos_id["PD4"],
+                             Senior_id=self.affiliations_pos_id["Senior"],
                              )
         except:
             print("Author with id = {} is already in database, update instead of insert".format(self.id))
@@ -266,8 +288,8 @@ def scrape_author(author):
 
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
-    authors_id = [1679997, 1471223]
-    authors_id = [1021261]
+    authors_id = [1679997, 1471223, 1021261]
+    #authors_id = [1021261]
     request_number = 0
     for author_id in authors_id:
         request_number += 1
