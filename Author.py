@@ -286,7 +286,7 @@ def scrape_author(author):
     author.h_index_published = citation_table["h_index_published"]
     author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
     author.citation_per_paper_published = citation_table["citation_per_paper_published"]
-    author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
+    #author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
 
     scraper.close()
 
