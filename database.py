@@ -2,6 +2,7 @@
 # import packages
 from global_vars import *
 import os
+import pandas as pd
 from sqlalchemy import create_engine, MetaData, Table, Column
 from sqlalchemy import select, insert
 from sqlalchemy import String, Integer, Boolean, Float, Date
@@ -104,6 +105,13 @@ class DatabaseAccessor:
                                            Senior4_year=Senior4_year)
         results = self.connection.execute(stmt)
         print(results.rowcount)
+
+    def export_table_to_csv(self, table_name, path=WORKING_PATH):
+        """exports a table with given name to csv file"""
+        stmt = "SELECT * FROM {}".format(table_name)
+        results = pd.read_sql_query(stmt,self.engine)
+        results.to_csv(path+table_name+".csv",index=False,sep=",")
+
 
     def close(self):
         self.connection.close()
