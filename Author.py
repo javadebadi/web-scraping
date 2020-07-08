@@ -60,6 +60,7 @@ class Author:
         self.h_index_published = 0
         self.papers_id_list = []
         self.affiliations_pos_id = {"BS":None, "MS":None, "PhD":None, "PD1":None, "PD2":None, "PD3":None, "PD4":None, "Senior1":None, "Senior2":None, "Senior3":None, "Senior4":None}
+        self.affiliations_pos_year = {"BS":None, "MS":None, "PhD":None, "PD1":None, "PD2":None, "PD3":None, "PD4":None, "Senior1":None, "Senior2":None, "Senior3":None, "Senior4":None}
 
     def _get_affiliations_pos_id(self):
         assert( len(self.affiliations_id) == len(self.affiliations_pos) )
@@ -80,8 +81,28 @@ class Author:
                 self.affiliations_pos_id["Senior"+str(Senior_count)] = self.affiliations_id[i]
                 Senior_count += 1
 
+    def _get_affiliations_pos_year(self):
+        assert( len(self.affiliations_years) == len(self.affiliations_pos) )
+        PD_count = 1  # since an author usually goes to several postdcs
+                      # we need to track number of postdocs
+        Senior_count = 1  # since some authors have several senior postions
+        for i in range(len(self.affiliations_pos)):
+            if self.affiliations_pos[i].upper() == "UNDERGRADUATE" or self.affiliations_pos[i].upper() == "BS":
+                self.affiliations_pos_year["BS"] = intN(self.affiliations_years[i])
+            if self.affiliations_pos[i].upper() == "MASTER" or self.affiliations_pos[i].upper() == "MS":
+                self.affiliations_pos_year["MS"] = intN(self.affiliations_years[i])
+            elif self.affiliations_pos[i].upper() == "PHD":
+                self.affiliations_pos_year["PhD"] = intN(self.affiliations_years[i])
+            elif self.affiliations_pos[i].upper() == "POSTDOC":
+                self.affiliations_pos_year["PD"+str(PD_count)] = intN(self.affiliations_years[i])
+                PD_count += 1
+            elif self.affiliations_pos[i].upper() == "SENIOR":
+                self.affiliations_pos_year["Senior"+str(Senior_count)] = intN(self.affiliations_years[i])
+                Senior_count += 1
+
     def finalize(self):
         self._get_affiliations_pos_id()
+        self._get_affiliations_pos_year()
 
     def insert_to_database(self):
         self.finalize()
@@ -90,16 +111,27 @@ class Author:
             db.insert_Author(Id=self.id,
                              Name=self.full_name,
                              BS_id=self.affiliations_pos_id["BS"],
+                             BS_year=self.affiliations_pos_year["BS"],
                              MS_id=self.affiliations_pos_id["MS"],
+                             MS_year=self.affiliations_pos_year["MS"],
                              PhD_id=self.affiliations_pos_id["PhD"],
+                             PhD_year=self.affiliations_pos_year["PhD"],
                              PD1_id=self.affiliations_pos_id["PD1"],
+                             PD1_year=self.affiliations_pos_year["PD1"],
                              PD2_id=self.affiliations_pos_id["PD2"],
+                             PD2_year=self.affiliations_pos_year["PD2"],
                              PD3_id=self.affiliations_pos_id["PD3"],
+                             PD3_year=self.affiliations_pos_year["PD3"],
                              PD4_id=self.affiliations_pos_id["PD4"],
+                             PD4_year=self.affiliations_pos_year["PD4"],
                              Senior1_id=self.affiliations_pos_id["Senior1"],
+                             Senior1_year=self.affiliations_pos_year["Senior1"],
                              Senior2_id=self.affiliations_pos_id["Senior2"],
+                             Senior2_year=self.affiliations_pos_year["Senior2"],
                              Senior3_id=self.affiliations_pos_id["Senior3"],
-                             Senior4_id=self.affiliations_pos_id["Senior4"]
+                             Senior3_year=self.affiliations_pos_year["Senior3"],
+                             Senior4_id=self.affiliations_pos_id["Senior4"],
+                             Senior4_year=self.affiliations_pos_year["Senior4"]
                              )
         except:
             print("Author with id = {} is already in database, update instead of insert".format(self.id))
@@ -189,7 +221,9 @@ class AuthorScraper():
         affiliations_years = self.browser.find_elements_by_css_selector(author_selector.affiliations_years)
         affiliations_years = list(reversed([year.text.split("-") for year in affiliations_years]))
         print(affiliations_years)
-        affiliations_years = merge_years_for_lists_of_list(affiliations_years)
+        #affiliations_years = merge_years_for_lists_of_list(affiliations_years)
+        # sotre start year of each affiliation
+        affiliations_years = [years[0] for years in affiliations_years]
         return affiliations_years
 
     def get_affiliations_pos(self):
