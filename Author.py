@@ -59,12 +59,13 @@ class Author:
         self.h_index_citeable = 0
         self.h_index_published = 0
         self.papers_id_list = []
-        self.affiliations_pos_id = {"BS":-1, "MS":-1, "PhD":-1, "PD1":-1, "PD2":-1, "PD3":-1, "PD4":-1, "Senior":-1}
+        self.affiliations_pos_id = {"BS":None, "MS":None, "PhD":None, "PD1":None, "PD2":None, "PD3":None, "PD4":None, "Senior1":None, "Senior2":None, "Senior3":None, "Senior4":None}
 
     def _get_affiliations_pos_id(self):
         assert( len(self.affiliations_id) == len(self.affiliations_pos) )
         PD_count = 1  # since an author usually goes to several postdcs
                       # we need to track number of postdocs
+        Senior_count = 1  # since some authors have several senior postions
         for i in range(len(self.affiliations_pos)):
             if self.affiliations_pos[i].upper() == "UNDERGRADUATE" or self.affiliations_pos[i].upper() == "BS":
                 self.affiliations_pos_id["BS"] = self.affiliations_id[i]
@@ -76,7 +77,8 @@ class Author:
                 self.affiliations_pos_id["PD"+str(PD_count)] = self.affiliations_id[i]
                 PD_count += 1
             elif self.affiliations_pos[i].upper() == "SENIOR":
-                self.affiliations_pos_id["Senior"] = self.affiliations_id[i]
+                self.affiliations_pos_id["Senior"+str(Senior_count)] = self.affiliations_id[i]
+                Senior_count += 1
 
     def finalize(self):
         self._get_affiliations_pos_id()
@@ -94,7 +96,10 @@ class Author:
                              PD2_id=self.affiliations_pos_id["PD2"],
                              PD3_id=self.affiliations_pos_id["PD3"],
                              PD4_id=self.affiliations_pos_id["PD4"],
-                             Senior_id=self.affiliations_pos_id["Senior"],
+                             Senior1_id=self.affiliations_pos_id["Senior1"],
+                             Senior2_id=self.affiliations_pos_id["Senior2"],
+                             Senior3_id=self.affiliations_pos_id["Senior3"],
+                             Senior4_id=self.affiliations_pos_id["Senior4"]
                              )
         except:
             print("Author with id = {} is already in database, update instead of insert".format(self.id))
@@ -289,7 +294,7 @@ def scrape_author(author):
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
     authors_id = [1679997, 1471223, 1021261]
-    #authors_id = [1021261]
+    authors_id = [1021261, 983868]
     request_number = 0
     for author_id in authors_id:
         request_number += 1
