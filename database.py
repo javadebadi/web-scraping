@@ -112,6 +112,11 @@ class DatabaseAccessor:
         results = pd.read_sql_query(stmt,self.engine)
         results.to_csv(path+table_name+".csv",index=False,sep=",")
 
+    def to_csv(self, path=WORKING_PATH):
+        """exports all tables in database to csv files
+        with name of each csv file to be same as the name of table"""
+        for table in self.metadata.tables.values():
+            self.export_table_to_csv(table.name, path=path)
 
     def close(self):
         self.connection.close()
