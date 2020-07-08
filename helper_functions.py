@@ -1,6 +1,22 @@
 from global_vars import *
 
 # helper functions
+def intN(text=""):
+    """same as python int() but here it returns None when
+    the argument is empty string
+
+    Args:
+        text (str): a string of number or empty string
+
+    Returns:
+        number (int)
+    """
+    try:
+        return int(text)
+    except:
+        return None
+
+
 def convert_str_to_int(text=""):
     """convert string to number, when the int() function does not work
     Some numbers in the website are like 3,589 which will not be converted
