@@ -34,13 +34,27 @@ class DatabaseCreator:
                                    primary_key=True, nullable=False),
                             Column('Name', String(255)),
                             Column('BS_id', Integer(), default=-1),
+                            Column('BS_year', Integer(), default=-1),
                             Column('MS_id', Integer(), default=-1),
+                            Column('MS_year', Integer(), default=-1),
                             Column('PhD_id', Integer(), default=-1),
+                            Column('PhD_year', Integer(), default=-1),
                             Column('PD1_id', Integer(), default=-1),
+                            Column('PD1_year', Integer(), default=-1),
                             Column('PD2_id', Integer(), default=-1),
+                            Column('PD2_year', Integer(), default=-1),
                             Column('PD3_id', Integer(), default=-1),
+                            Column('PD3_year', Integer(), default=-1),
                             Column('PD4_id', Integer(), default=-1),
-                            Column('Senior_id', Integer(), default=-1)
+                            Column('PD4_year', Integer(), default=-1),
+                            Column('Senior1_id', Integer(), default=-1),
+                            Column('Senior1_year', Integer(), default=-1),
+                            Column('Senior2_id', Integer(), default=-1),
+                            Column('Senior2_year', Integer(), default=-1),
+                            Column('Senior3_id', Integer(), default=-1),
+                            Column('Senior3_year', Integer(), default=-1),
+                            Column('Senior4_id', Integer(), default=-1),
+                            Column('Senior4_year', Integer(), default=-1),
                             )
 
 
@@ -53,17 +67,41 @@ class DatabaseAccessor:
                              autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
 
-    def insert_Author(self, Id, Name, BS_id=-1, MS_id=-1, PhD_id=-1, PD1_id=-1,
-                      PD2_id=-1, PD3_id=-1, PD4_id=-1, Senior_id=-1):
+    def insert_Author(self, Id, Name,
+                      BS_id=-1, BS_year=-1,
+                      MS_id=-1, MS_year=-1,
+                      PhD_id=-1, PhD_year=-1,
+                      PD1_id=-1, PD1_year=-1,
+                      PD2_id=-1, PD2_year=-1,
+                      PD3_id=-1, PD3_year=-1,
+                      PD4_id=-1, PD4_year=-1,
+                      Senior1_id=-1, Senior1_year=-1,
+                      Senior2_id=-1, Senior2_year=-1,
+                      Senior3_id=-1, Senior3_year=-1,
+                      Senior4_id=-1, Senior4_year=-1):
         stmt = insert(self.Authors).values(Id=Id, Name=Name,
                                            BS_id=BS_id,
+                                           BS_year=BS_year,
                                            MS_id=MS_id,
+                                           MS_year=MS_year,
                                            PhD_id=PhD_id,
+                                           PhD_year=PhD_year,
                                            PD1_id=PD1_id,
+                                           PD1_year=PD1_year,
                                            PD2_id=PD2_id,
+                                           PD2_year=PD2_year,
                                            PD3_id=PD3_id,
+                                           PD3_year=PD3_year,
                                            PD4_id=PD4_id,
-                                           Senior_id=Senior_id)
+                                           PD4_year=PD4_year,
+                                           Senior1_id=Senior1_id,
+                                           Senior1_year=Senior1_year,
+                                           Senior2_id=Senior2_id,
+                                           Senior2_year=Senior2_year,
+                                           Senior3_id=Senior3_id,
+                                           Senior3_year=Senior3_year,
+                                           Senior4_id=Senior4_id,
+                                           Senior4_year=Senior4_year)
         results = self.connection.execute(stmt)
         print(results.rowcount)
 
