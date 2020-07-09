@@ -56,6 +56,7 @@ class DatabaseCreator:
                             Column('Senior3_year', Integer(), default=None),
                             Column('Senior4_id', Integer(), default=None),
                             Column('Senior4_year', Integer(), default=None),
+                            Column('Nationality_id', String(2), default=None)
                             )
 
 
@@ -79,7 +80,8 @@ class DatabaseAccessor:
                       Senior1_id=None, Senior1_year=None,
                       Senior2_id=None, Senior2_year=None,
                       Senior3_id=None, Senior3_year=None,
-                      Senior4_id=None, Senior4_year=None):
+                      Senior4_id=None, Senior4_year=None,
+                      Nationality_id=None):
         stmt = insert(self.Authors).values(Id=Id, Name=Name,
                                            BS_id=BS_id,
                                            BS_year=BS_year,
@@ -102,7 +104,8 @@ class DatabaseAccessor:
                                            Senior3_id=Senior3_id,
                                            Senior3_year=Senior3_year,
                                            Senior4_id=Senior4_id,
-                                           Senior4_year=Senior4_year)
+                                           Senior4_year=Senior4_year,
+                                           Nationality_id=Nationality_id)
         results = self.connection.execute(stmt)
         print(results.rowcount)
 
