@@ -121,6 +121,14 @@ class DatabaseAccessor:
         for table in self.metadata.tables.values():
             self.export_table_to_csv(table.name, path=path)
 
+    def update(self, table_name, Id, column_name, value):
+        if type(value) == str:
+            stmt = "UPDATE {} SET {} = '{}' WHERE Id = {}".format(table_name, column_name, value, Id)
+        else:
+            stmt = "UPDATE {} SET {} = {} WHERE Id = {}".format(table_name, column_name, value, Id)
+        self.connection.execute(stmt)
+
+
     def close(self):
         self.connection.close()
         engine.dispose()
