@@ -61,6 +61,7 @@ class Author:
         self.papers_id_list = []
         self.affiliations_pos_id = {"BS":None, "MS":None, "PhD":None, "PD1":None, "PD2":None, "PD3":None, "PD4":None, "Senior1":None, "Senior2":None, "Senior3":None, "Senior4":None}
         self.affiliations_pos_year = {"BS":None, "MS":None, "PhD":None, "PD1":None, "PD2":None, "PD3":None, "PD4":None, "Senior1":None, "Senior2":None, "Senior3":None, "Senior4":None}
+        self.info = {}
 
     def _get_affiliations_pos_id(self):
         assert( len(self.affiliations_id) == len(self.affiliations_pos) )
@@ -100,9 +101,35 @@ class Author:
                 self.affiliations_pos_year["Senior"+str(Senior_count)] = intN(self.affiliations_years[i])
                 Senior_count += 1
 
+    def _fill_info(self):
+        self.info["Id"] = self.id
+        self.info["Name"] = self.full_name
+        self.info["BS_id"] = self.affiliations_pos_id["BS"]
+        self.info["MS_id"] = self.affiliations_pos_id["MS"],
+        self.info["MS_year"] = self.affiliations_pos_year["MS"],
+        self.info["PhD_id"] = self.affiliations_pos_id["PhD"],
+        self.info["PhD_year"] = self.affiliations_pos_year["PhD"],
+        self.info["PD1_id"] = self.affiliations_pos_id["PD1"],
+        self.info["PD1_year"] = self.affiliations_pos_year["PD1"],
+        self.info["PD2_id"] = self.affiliations_pos_id["PD2"],
+        self.info["PD2_year"] = self.affiliations_pos_year["PD2"],
+        self.info["PD3_id"] = self.affiliations_pos_id["PD3"],
+        self.info["PD3_year"] = self.affiliations_pos_year["PD3"],
+        self.info["PD4_id"] = self.affiliations_pos_id["PD4"],
+        self.info["PD4_year"] = self.affiliations_pos_year["PD4"],
+        self.info["Senior1_id"] = self.affiliations_pos_id["Senior1"],
+        self.info["Senior1_year"] = self.affiliations_pos_year["Senior1"],
+        self.info["Senior2_id"] = self.affiliations_pos_id["Senior2"],
+        self.info["Senior2_year"] = self.affiliations_pos_year["Senior2"],
+        self.info["Senior3_id"] = self.affiliations_pos_id["Senior3"],
+        self.info["Senior3_year"] = self.affiliations_pos_year["Senior3"],
+        self.info["Senior4_id"] = self.affiliations_pos_id["Senior4"],
+        self.info["Senior4_year"] = self.affiliations_pos_year["Senior4"]
+
     def finalize(self):
         self._get_affiliations_pos_id()
         self._get_affiliations_pos_year()
+        self._fill_info()
 
     def insert_to_database(self):
         self.finalize()
