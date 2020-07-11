@@ -56,7 +56,11 @@ class DatabaseCreator:
                             Column('Senior3_year', Integer(), default=None),
                             Column('Senior4_id', Integer(), default=None),
                             Column('Senior4_year', Integer(), default=None),
-                            Column('Nationality_id', String(2), default=None)
+                            Column('Nationality_id', String(2), default=None),
+                            Column('Papers_citeable', Integer(), default=None),
+                            Column('Citation_citeable', Integer(), default=None),
+                            Column('Papers_published', Integer(), default=None),
+                            Column('Citation_published', Integer(), default=None)
                             )
 
 
