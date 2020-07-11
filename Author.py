@@ -102,29 +102,33 @@ class Author:
                 Senior_count += 1
 
     def _fill_info(self):
-        self.info["Id"] = self.id
+        #self.info["Id"] = self.id
         self.info["Name"] = self.full_name
         self.info["BS_id"] = self.affiliations_pos_id["BS"]
-        self.info["MS_id"] = self.affiliations_pos_id["MS"],
-        self.info["MS_year"] = self.affiliations_pos_year["MS"],
-        self.info["PhD_id"] = self.affiliations_pos_id["PhD"],
-        self.info["PhD_year"] = self.affiliations_pos_year["PhD"],
-        self.info["PD1_id"] = self.affiliations_pos_id["PD1"],
-        self.info["PD1_year"] = self.affiliations_pos_year["PD1"],
-        self.info["PD2_id"] = self.affiliations_pos_id["PD2"],
-        self.info["PD2_year"] = self.affiliations_pos_year["PD2"],
-        self.info["PD3_id"] = self.affiliations_pos_id["PD3"],
-        self.info["PD3_year"] = self.affiliations_pos_year["PD3"],
-        self.info["PD4_id"] = self.affiliations_pos_id["PD4"],
-        self.info["PD4_year"] = self.affiliations_pos_year["PD4"],
-        self.info["Senior1_id"] = self.affiliations_pos_id["Senior1"],
-        self.info["Senior1_year"] = self.affiliations_pos_year["Senior1"],
-        self.info["Senior2_id"] = self.affiliations_pos_id["Senior2"],
-        self.info["Senior2_year"] = self.affiliations_pos_year["Senior2"],
-        self.info["Senior3_id"] = self.affiliations_pos_id["Senior3"],
-        self.info["Senior3_year"] = self.affiliations_pos_year["Senior3"],
-        self.info["Senior4_id"] = self.affiliations_pos_id["Senior4"],
+        self.info["MS_id"] = self.affiliations_pos_id["MS"]
+        self.info["MS_year"] = self.affiliations_pos_year["MS"]
+        self.info["PhD_id"] = self.affiliations_pos_id["PhD"]
+        self.info["PhD_year"] = self.affiliations_pos_year["PhD"]
+        self.info["PD1_id"] = self.affiliations_pos_id["PD1"]
+        self.info["PD1_year"] = self.affiliations_pos_year["PD1"]
+        self.info["PD2_id"] = self.affiliations_pos_id["PD2"]
+        self.info["PD2_year"] = self.affiliations_pos_year["PD2"]
+        self.info["PD3_id"] = self.affiliations_pos_id["PD3"]
+        self.info["PD3_year"] = self.affiliations_pos_year["PD3"]
+        self.info["PD4_id"] = self.affiliations_pos_id["PD4"]
+        self.info["PD4_year"] = self.affiliations_pos_year["PD4"]
+        self.info["Senior1_id"] = self.affiliations_pos_id["Senior1"]
+        self.info["Senior1_year"] = self.affiliations_pos_year["Senior1"]
+        self.info["Senior2_id"] = self.affiliations_pos_id["Senior2"]
+        self.info["Senior2_year"] = self.affiliations_pos_year["Senior2"]
+        self.info["Senior3_id"] = self.affiliations_pos_id["Senior3"]
+        self.info["Senior3_year"] = self.affiliations_pos_year["Senior3"]
+        self.info["Senior4_id"] = self.affiliations_pos_id["Senior4"]
         self.info["Senior4_year"] = self.affiliations_pos_year["Senior4"]
+        self.info["Papers_citeable"] = self.papers_citeable
+        self.info["Citations_citeable"] = self.citations_citeable
+        self.info["Papers_citeable"] = self.papers_published
+        self.info["Citations_published"] = self.citations_published
 
     def finalize(self):
         self._get_affiliations_pos_id()
@@ -161,7 +165,13 @@ class Author:
                              Senior4_year=self.affiliations_pos_year["Senior4"]
                              )
         except:
-            print("Author with id = {} is already in database, update instead of insert".format(self.id))
+            print("Author with id = {} is already in database, doing update instead of insert ...".format(self.id))
+            for key, value in self.info.items():
+                if value == None:
+                    pass
+                else:
+                    db.update_Author(self.id, key, value)
+                print("==============")
         db.close()
 
     def __str__(self):
