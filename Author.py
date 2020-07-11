@@ -129,6 +129,7 @@ class Author:
         self.info["Citations_citeable"] = self.citations_citeable
         self.info["Papers_published"] = self.papers_published
         self.info["Citations_published"] = self.citations_published
+        self.info["Papers_id"] = str(self.papers_id_list).replace("[","").replace("]","").replace(",","")
 
     def finalize(self):
         self._get_affiliations_pos_id()
@@ -338,15 +339,15 @@ def scrape_author(author):
     author.h_index_published = citation_table["h_index_published"]
     author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
     author.citation_per_paper_published = citation_table["citation_per_paper_published"]
-    #author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
+    author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
 
     scraper.close()
 
 
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
-    authors_id = [1679997, 1471223, 1021261]
-    authors_id = [1021261, 983868]
+    #authors_id = [1679997, 1471223, 1021261]
+    #authors_id = [1021261, 983868]
     request_number = 0
     for author_id in authors_id:
         request_number += 1
