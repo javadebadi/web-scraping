@@ -77,7 +77,9 @@ class DatabaseCreator:
                             Column('Telegram', String(127), default=None),
                             Column('Phone', String(31), default=None),
                             Column('GoogleScholar', String(127), default=None),
-                            Column('Inspirehep',String(127), default=None)
+                            Column('Inspirehep',String(127), default=None),
+                            Column('Scrape_depth', String(15), default=None),
+                            Column('Research_areas', String(127), default=None)
                             )
 
 
