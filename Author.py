@@ -102,7 +102,7 @@ class Author:
                 Senior_count += 1
 
     def _fill_info(self):
-        #self.info["Id"] = self.id
+        self.info["Id"] = self.id
         self.info["Name"] = self.full_name
         self.info["BS_id"] = self.affiliations_pos_id["BS"]
         self.info["MS_id"] = self.affiliations_pos_id["MS"]
@@ -127,7 +127,7 @@ class Author:
         self.info["Senior4_year"] = self.affiliations_pos_year["Senior4"]
         self.info["Papers_citeable"] = self.papers_citeable
         self.info["Citations_citeable"] = self.citations_citeable
-        self.info["Papers_citeable"] = self.papers_published
+        self.info["Papers_published"] = self.papers_published
         self.info["Citations_published"] = self.citations_published
 
     def finalize(self):
@@ -135,43 +135,24 @@ class Author:
         self._get_affiliations_pos_year()
         self._fill_info()
 
+    def _update_in_database(self, db):
+        for key, value in self.info.items():
+            if key == 'id': # ignore id information from update
+                continue
+            if value == None:
+                pass
+            else:
+                db.update_Author(self.id, key, value)
+
     def insert_to_database(self):
         self.finalize()
         db = DatabaseAccessor()
         try:
-            db.insert_Author(Id=self.id,
-                             Name=self.full_name,
-                             BS_id=self.affiliations_pos_id["BS"],
-                             BS_year=self.affiliations_pos_year["BS"],
-                             MS_id=self.affiliations_pos_id["MS"],
-                             MS_year=self.affiliations_pos_year["MS"],
-                             PhD_id=self.affiliations_pos_id["PhD"],
-                             PhD_year=self.affiliations_pos_year["PhD"],
-                             PD1_id=self.affiliations_pos_id["PD1"],
-                             PD1_year=self.affiliations_pos_year["PD1"],
-                             PD2_id=self.affiliations_pos_id["PD2"],
-                             PD2_year=self.affiliations_pos_year["PD2"],
-                             PD3_id=self.affiliations_pos_id["PD3"],
-                             PD3_year=self.affiliations_pos_year["PD3"],
-                             PD4_id=self.affiliations_pos_id["PD4"],
-                             PD4_year=self.affiliations_pos_year["PD4"],
-                             Senior1_id=self.affiliations_pos_id["Senior1"],
-                             Senior1_year=self.affiliations_pos_year["Senior1"],
-                             Senior2_id=self.affiliations_pos_id["Senior2"],
-                             Senior2_year=self.affiliations_pos_year["Senior2"],
-                             Senior3_id=self.affiliations_pos_id["Senior3"],
-                             Senior3_year=self.affiliations_pos_year["Senior3"],
-                             Senior4_id=self.affiliations_pos_id["Senior4"],
-                             Senior4_year=self.affiliations_pos_year["Senior4"]
-                             )
+            db.insert_Author(Id=self.id, Name=self.full_name)
         except:
             print("Author with id = {} is already in database, doing update instead of insert ...".format(self.id))
-            for key, value in self.info.items():
-                if value == None:
-                    pass
-                else:
-                    db.update_Author(self.id, key, value)
-                print("==============")
+            self._update_in_database(db)
+
         db.close()
 
     def __str__(self):
