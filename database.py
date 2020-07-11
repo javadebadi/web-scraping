@@ -58,9 +58,9 @@ class DatabaseCreator:
                             Column('Senior4_year', Integer(), default=None),
                             Column('Nationality_id', String(2), default=None),
                             Column('Papers_citeable', Integer(), default=None),
-                            Column('Citation_citeable', Integer(), default=None),
+                            Column('Citations_citeable', Integer(), default=None),
                             Column('Papers_published', Integer(), default=None),
-                            Column('Citation_published', Integer(), default=None)
+                            Column('Citations_published', Integer(), default=None)
                             )
 
 
@@ -112,6 +112,9 @@ class DatabaseAccessor:
                                            Nationality_id=Nationality_id)
         results = self.connection.execute(stmt)
         print(results.rowcount)
+
+    def update_Author(self, Id, column_name, value):
+        self.update("Authors", Id, column_name, value)
 
     def export_table_to_csv(self, table_name, path=WORKING_PATH):
         """exports a table with given name to csv file"""
