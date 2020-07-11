@@ -63,7 +63,12 @@ class DatabaseCreator:
                             Column('Citations_published', Integer(), default=None),
                             Column('Citations_L0', Integer(), default=None),
                             Column('Citations_L1', Integer(), default=None),
-                            Column('Citations_L2', Integer(), default=None)
+                            Column('Citations_L2', Integer(), default=None),
+                            Column('Citations_L3', Integer(), default=None),
+                            Column('Citations_L4', Integer(), default=None),
+                            Column('Citations_L5', Integer(), default=None),
+                            Column('Citations_L6', Integer(), default=None),
+                            Column('Citations_Linf', Integer(), default=None)
                             )
 
 
@@ -76,43 +81,8 @@ class DatabaseAccessor:
                              autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
 
-    def insert_Author(self, Id, Name,
-                      BS_id=None, BS_year=None,
-                      MS_id=None, MS_year=None,
-                      PhD_id=None, PhD_year=None,
-                      PD1_id=None, PD1_year=None,
-                      PD2_id=None, PD2_year=None,
-                      PD3_id=None, PD3_year=None,
-                      PD4_id=None, PD4_year=None,
-                      Senior1_id=None, Senior1_year=None,
-                      Senior2_id=None, Senior2_year=None,
-                      Senior3_id=None, Senior3_year=None,
-                      Senior4_id=None, Senior4_year=None,
-                      Nationality_id=None):
-        stmt = insert(self.Authors).values(Id=Id, Name=Name,
-                                           BS_id=BS_id,
-                                           BS_year=BS_year,
-                                           MS_id=MS_id,
-                                           MS_year=MS_year,
-                                           PhD_id=PhD_id,
-                                           PhD_year=PhD_year,
-                                           PD1_id=PD1_id,
-                                           PD1_year=PD1_year,
-                                           PD2_id=PD2_id,
-                                           PD2_year=PD2_year,
-                                           PD3_id=PD3_id,
-                                           PD3_year=PD3_year,
-                                           PD4_id=PD4_id,
-                                           PD4_year=PD4_year,
-                                           Senior1_id=Senior1_id,
-                                           Senior1_year=Senior1_year,
-                                           Senior2_id=Senior2_id,
-                                           Senior2_year=Senior2_year,
-                                           Senior3_id=Senior3_id,
-                                           Senior3_year=Senior3_year,
-                                           Senior4_id=Senior4_id,
-                                           Senior4_year=Senior4_year,
-                                           Nationality_id=Nationality_id)
+    def insert_Author(self, Id, Name):
+        stmt = insert(self.Authors).values(Id=Id, Name=Name)
         results = self.connection.execute(stmt)
         print(results.rowcount)
 
