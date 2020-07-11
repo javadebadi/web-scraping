@@ -68,7 +68,10 @@ class DatabaseCreator:
                             Column('Citations_L4', Integer(), default=None),
                             Column('Citations_L5', Integer(), default=None),
                             Column('Citations_L6', Integer(), default=None),
-                            Column('Citations_Linf', Integer(), default=None)
+                            Column('Citations_Linf', Integer(), default=None),
+                            Column('Experiments', String(255), default=None),
+                            Column('PhD_Advisor', String(255), default=None),
+                            Column('Papers_id', String(2**14-1), default=None)
                             )
 
 
