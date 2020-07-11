@@ -60,7 +60,10 @@ class DatabaseCreator:
                             Column('Papers_citeable', Integer(), default=None),
                             Column('Citations_citeable', Integer(), default=None),
                             Column('Papers_published', Integer(), default=None),
-                            Column('Citations_published', Integer(), default=None)
+                            Column('Citations_published', Integer(), default=None),
+                            Column('Citations_L0', Integer(), default=None),
+                            Column('Citations_L1', Integer(), default=None),
+                            Column('Citations_L2', Integer(), default=None)
                             )
 
 
