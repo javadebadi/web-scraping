@@ -42,8 +42,9 @@ class Author:
     """
     class for authors
     """
-    def __init__(self, id=0, full_name=""):
+    def __init__(self, id=0, scrape_depth="name", full_name=""):
         self.id = id
+        self.scrape_depth = scrape_depth
         self.full_name = full_name
         self.url = URL_AUTHORS + str(id)
         self.research_areas = []
@@ -104,6 +105,11 @@ class Author:
     def _fill_info(self):
         self.info["Id"] = self.id
         self.info["Name"] = self.full_name
+        self.info["Scrape_depth"] = self.scrape_depth
+        self.info['Research_areas'] = str(self.research_areas).replace("[","").replace("]","").replace("'","").replace(",","")
+        self.info['Inspirehep'] = self.url
+        if self.scrape_depth == 'name':
+            return
         self.info["BS_id"] = self.affiliations_pos_id["BS"]
         self.info["MS_id"] = self.affiliations_pos_id["MS"]
         self.info["MS_year"] = self.affiliations_pos_year["MS"]
@@ -125,11 +131,17 @@ class Author:
         self.info["Senior3_year"] = self.affiliations_pos_year["Senior3"]
         self.info["Senior4_id"] = self.affiliations_pos_id["Senior4"]
         self.info["Senior4_year"] = self.affiliations_pos_year["Senior4"]
+        if self.scrape_depth == 'affiliations':
+            return
         self.info["Papers_citeable"] = self.papers_citeable
         self.info["Citations_citeable"] = self.citations_citeable
         self.info["Papers_published"] = self.papers_published
         self.info["Citations_published"] = self.citations_published
+        if self.scrape_depth == 'citations':
+            return
         self.info["Papers_id"] = str(self.papers_id_list).replace("[","").replace("]","").replace(",","")
+        if self.scrape_depth == 'all':
+            return
 
     def finalize(self):
         self._get_affiliations_pos_id()
@@ -150,6 +162,7 @@ class Author:
         db = DatabaseAccessor()
         try:
             db.insert_Author(Id=self.id, Name=self.full_name)
+            self._update_in_database(db)
         except:
             print("Author with id = {} is already in database, doing update instead of insert ...".format(self.id))
             self._update_in_database(db)
@@ -320,16 +333,31 @@ class AuthorScraper():
 
 def scrape_author(author):
     """scrape authors profile and fill its information in
-    author object from Author class"""
+    author object from Author class
+
+    scrape_depth (string):
+        determines how much information is needed to be scraped from webpage,
+        if scrape_depth is 'name' it scrapes all information available at first
+        if scrape_depth is 'affiliations' it scrapes all affiliations
+        if scrape_depth is 'citations' it also scrapes the citation table
+        if scrape_depth is  'all' it scrapes all papers of the author
+    """
     scraper = AuthorScraper(author)
+    scrape_depth = author.scrape_depth
     if not scraper.author_exists():
         return
 
     author.full_name = scraper.get_full_name()
     author.research_areas = scraper.get_research_areas()
+    if scrape_depth == 'name':
+        scraper.close()
+        return
     author.affiliations_id = scraper.get_affiliations_id()
     author.affiliations_years = scraper.get_affiliations_years()
     author.affiliations_pos = scraper.get_affiliations_pos()
+    if scrape_depth == 'affiliations':
+        scraper.close()
+        return
     citation_table = scraper.get_citation_table()
     author.papers_citeable = citation_table["papers_citeable"]
     author.papers_published = citation_table["papers_published"]
@@ -339,10 +367,15 @@ def scrape_author(author):
     author.h_index_published = citation_table["h_index_published"]
     author.citation_per_paper_citeable = citation_table["citation_per_paper_citeable"]
     author.citation_per_paper_published = citation_table["citation_per_paper_published"]
+    if scrape_depth == 'citations':
+        scraper.close()
+        return
     author.papers_id_list = scraper.get_papers_id_list(author.papers_citeable)
-
-    scraper.close()
-
+    if scrape_depth == 'all':
+        scraper.close()
+        return
+    else:
+        raise ValueError("scrape_depth = {} is an invalid value ...".format(scrape_depth))
 
 def main():
     authors_id = [1679997, 1471223, 1023812, 989083, 1021261, 1258934]
@@ -352,7 +385,7 @@ def main():
     for author_id in authors_id:
         request_number += 1
         print("Request Number = {}".format(request_number))
-        author = Author(author_id)
+        author = Author(id=author_id, scrape_depth='citations')
         scrape_author(author)
 
         print(author)
