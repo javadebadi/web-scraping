@@ -71,7 +71,13 @@ class DatabaseCreator:
                             Column('Citations_Linf', Integer(), default=None),
                             Column('Experiments', String(255), default=None),
                             Column('PhD_Advisor', String(255), default=None),
-                            Column('Papers_id', String(2**14-1), default=None)
+                            Column('Papers_id', String(2**14-1), default=None),
+                            Column('Email', String(255), default=None),
+                            Column('LinkedIn', String(127), default=None),
+                            Column('Telegram', String(127), default=None),
+                            Column('Phone', String(31), default=None),
+                            Column('GoogleScholar', String(127), default=None),
+                            Column('Inspirehep',String(127), default=None)
                             )
 
 
