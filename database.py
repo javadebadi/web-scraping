@@ -23,8 +23,50 @@ class DatabaseCreator:
         self.metadata = MetaData()
 
     def create_all_tables(self):
+        self.create_PapersTable()
         self.create_AuthorsTable()
+        self.create_InstitutionsTable()
         self.metadata.create_all(engine)
+
+    def create_PapersTable(self):
+        # create table if it does not exists
+        if not self.engine.dialect.has_table(self.engine, 'Papers'):
+            # Create a table with the appropriate Columns
+            Papers = Table('Papers', self.metadata,
+                            Column('Id', Integer(),
+                                   primary_key=True, nullable=False),
+                            Column('Title', String(255), default=None),
+                            Column('Authors_Institutes_id', String(2**15-1), default=None),
+                            Column('Published', Boolean(), default=None),
+                            Column('Collaborations_id', String(127), default=None),
+                            Column('DOI', String(255), default=None),
+                            Column('References', Integer(), default=None),
+                            Column('References_id', String(2**10-1)),
+                            Column('Citations', Integer(), default=None),
+                            Column('Citations_id', Integer(), default=None),
+                            Column('arXiv', String(255), default=None),
+                            Column('reseach_areas', String(127), default=None),
+                            Column('Date', String(31), default=None)
+                            )
+
+
+    def create_InstitutionsTable(self):
+        # create table if it does not exists
+        if not self.engine.dialect.has_table(self.engine, 'Institutions'):
+            # Create a table with the appropriate Columns
+            Institutions = Table('Institutions', self.metadata,
+                            Column('Id', Integer(),
+                                   primary_key=True, nullable=False),
+                            Column('Name', String(255)),
+                            Column('Address', Integer(), default=None),
+                            Column('Country_id', String(2), default=None),
+                            Column('Website', String(255), default=None),
+                            Column('Papers_citeable', Integer(), default=None),
+                            Column('Papers_published', Integer(), default=None),
+                            Column('Citations_citeable', Integer(), default=None),
+                            Column('Citations_published', Integer(), default=None),
+                            Column('Papers_id', String(2**15-1), default=None)
+                            )
 
     def create_AuthorsTable(self):
         # create table if it does not exists
@@ -88,7 +130,12 @@ class DatabaseAccessor:
     def __init__(self, db_path=DB_PATH):
         self.engine = create_engine(DB_PATH)  # create engine
         self.metadata = MetaData()
+        self.tables_names = ["Papers", "Authors", "Institutions"]
+        self.Papers = Table('Papers', self.metadata,
+                             autoload=True, autoload_with=engine)
         self.Authors = Table('Authors', self.metadata,
+                             autoload=True, autoload_with=engine)
+        self.Institutions = Table('Institutions', self.metadata,
                              autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
 
@@ -96,6 +143,11 @@ class DatabaseAccessor:
         stmt = insert(self.Authors).values(Id=Id, Name=Name)
         results = self.connection.execute(stmt)
         print(results.rowcount)
+
+    def insert_Paper(self, Id):
+        stmt = insert(self.Papers).values(Id=Id)
+        result = self.connection.execute(stmt)
+
 
     def update_Author(self, Id, column_name, value):
         self.update("Authors", Id, column_name, value)
@@ -112,7 +164,12 @@ class DatabaseAccessor:
         for table in self.metadata.tables.values():
             self.export_table_to_csv(table.name, path=path)
 
+    def _check_table_existence(self, table_name):
+        if not table_name in self.tables_names:
+            raise ValueError("No table with name {} in the database".format(table_name))
+
     def update(self, table_name, Id, column_name, value):
+        self._check_table_existence(table_name)
         if type(value) == str:
             stmt = "UPDATE {} SET {} = '{}' WHERE Id = {}".format(table_name, column_name, value, Id)
         else:
@@ -124,6 +181,31 @@ class DatabaseAccessor:
         self.connection.close()
         engine.dispose()
 
+
+class DatabaseOrganizer():
+    def __init__(self, db_path=DB_PATH):
+        self.db = DatabaseAccessor(db_path=db_path)
+
+    def add_id_from_Authors_to_Papers(self):
+        stmt = select([self.db.Authors])
+        for author in self.db.connection.execute(stmt):
+                papers = [int(elem) for elem in author.Papers_id.split()]
+                for id in papers:
+                    #self.db.insert_Paper(Id=id)
+                    try:
+                        print("id")
+                        self.db.insert_Paper(Id=id)
+                        print(id)
+                        print("-----------")
+                    except:
+                        continue
+
+
+    def organize(self):
+        self.add_id_from_Authors_to_Papers()
+
+    def close(self):
+        self.db.close()
 
 if __name__ == "__main__":
     os.remove("hep.sqlite")
