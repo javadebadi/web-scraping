@@ -46,6 +46,7 @@ class DatabaseCreator:
                             Column('Citations_id', Integer(), default=None),
                             Column('arXiv', String(255), default=None),
                             Column('reseach_areas', String(127), default=None),
+                            Column('Publish_year', Integer(), default=None),
                             Column('Date', String(31), default=None)
                             )
 
@@ -65,7 +66,8 @@ class DatabaseCreator:
                             Column('Papers_published', Integer(), default=None),
                             Column('Citations_citeable', Integer(), default=None),
                             Column('Citations_published', Integer(), default=None),
-                            Column('Papers_id', String(2**15-1), default=None)
+                            Column('Papers_id', String(2**15-1), default=None),
+                            Column('Authors_id', String(2**10-1), default=None)
                             )
 
     def create_AuthorsTable(self):
@@ -191,12 +193,9 @@ class DatabaseOrganizer():
         for author in self.db.connection.execute(stmt):
                 papers = [int(elem) for elem in author.Papers_id.split()]
                 for id in papers:
-                    #self.db.insert_Paper(Id=id)
                     try:
-                        print("id")
                         self.db.insert_Paper(Id=id)
-                        print(id)
-                        print("-----------")
+                        print(str(id) + " added to Papers table ...")
                     except:
                         continue
 
