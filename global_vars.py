@@ -32,6 +32,7 @@ DB_NAME = "hep.sqlite"
 if OS == "WINDOWS":
     if PC == "JAVAD":
         WORKING_PATH = "C:\\Users\\Javad\\github\\web-scraping\\"
+        PATH_TO_DRIVER = WORKING_PATH + "chromedriver.exe"
 else:
     WORKING_PATH = ""
 
