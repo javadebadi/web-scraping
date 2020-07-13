@@ -126,6 +126,36 @@ def get_country_id(text):
         (str): a text with length 2"""
 
     textc = text.lower().strip()
+    if "United States".lower() in textc:
+        return "US" 
+    if "China".lower() in textc:
+        return "CN"
+    if "French Polynesia".lower() in textc:
+        return "PF"
+    if "French Southern Territories".lower() in textc:
+        return "TF"
+    if "France".lower() in textc:
+        return "FR"
+    if "Germany".lower() in textc:
+        return "DE"
+    if "Iran".lower() in textc:
+        return "IR"
+    if "Israel".lower() in textc:
+        return "IL"
+    if "Japan".lower() in textc:
+        return "JP"
+    if "Netherlands".lower() in textc:
+        return "NL"
+    if "Russia".lower() in textc:
+        return "RU"
+    if "South Africa".lower() in textc:
+        return "ZA"
+    if "South Korea".lower() in textc:
+        return "KR"
+    if "Sweden".lower() in textc:
+        return "SE"
+    if "Switzerland".lower() in textc:
+        return "CH"
     if "Afghanistan".lower() in textc:
         return "AF"
     if "Aland Islands".lower() in textc:
@@ -218,8 +248,6 @@ def get_country_id(text):
         return "TD"
     if "Chile".lower() in textc:
         return "CL"
-    if "China".lower() in textc:
-        return "CN"
     if "Christmas Island".lower() in textc:
         return "CX"
     if "Cocos Islands".lower() in textc:
@@ -278,20 +306,12 @@ def get_country_id(text):
         return "FI"
     if "French Guiana".lower() in textc:
         return "GF"
-    if "French Polynesia".lower() in textc:
-        return "PF"
-    if "French Southern Territories".lower() in textc:
-        return "TF"
-    if "France".lower() in textc:
-        return "FR"
     if "Gabon".lower() in textc:
         return "GA"
     if "Gambia".lower() in textc:
         return "GM"
     if "Georgia".lower() in textc:
         return "GE"
-    if "Germany".lower() in textc:
-        return "DE"
     if "Ghana".lower() in textc:
         return "GH"
     if "Gibraltar".lower() in textc:
@@ -332,24 +352,18 @@ def get_country_id(text):
         return "IN"
     if "Indonesia".lower() in textc:
         return "ID"
-    if "Iran".lower() in textc:
-        return "IR"
     if "Iraq".lower() in textc:
         return "IQ"
     if "Ireland".lower() in textc:
         return "IE"
     if "Isle of Man".lower() in textc:
         return "IM"
-    if "Israel".lower() in textc:
-        return "IL"
     if "Italy".lower() in textc:
         return "IT"
     if "Ivory Coast".lower() in textc:
         return "CI"
     if "Jamaica".lower() in textc:
         return "JM"
-    if "Japan".lower() in textc:
-        return "JP"
     if "Jersey".lower() in textc:
         return "JE"
     if "Jordan".lower() in textc:
@@ -436,8 +450,6 @@ def get_country_id(text):
         return "NR"
     if "Nepal".lower() in textc:
         return "NP"
-    if "Netherlands".lower() in textc:
-        return "NL"
     if "Netherlands Antilles".lower() in textc:
         return "AN"
     if "New Caledonia".lower() in textc:
@@ -494,8 +506,6 @@ def get_country_id(text):
         return "RE"
     if "Romania".lower() in textc:
         return "RO"
-    if "Russia".lower() in textc:
-        return "RU"
     if "Rwanda".lower() in textc:
         return "RW"
     if "Saint Barthelemy".lower() in textc:
@@ -542,12 +552,8 @@ def get_country_id(text):
         return "SB"
     if "Somalia".lower() in textc:
         return "SO"
-    if "South Africa".lower() in textc:
-        return "ZA"
     if "South Georgia and the South Sandwich Islands".lower() in textc:
         return "GS"
-    if "South Korea".lower() in textc:
-        return "KR"
     if "South Sudan".lower() in textc:
         return "SS"
     if "Spain".lower() in textc:
@@ -562,10 +568,6 @@ def get_country_id(text):
         return "SJ"
     if "Swaziland".lower() in textc:
         return "SZ"
-    if "Sweden".lower() in textc:
-        return "SE"
-    if "Switzerland".lower() in textc:
-        return "CH"
     if "Syria".lower() in textc:
         return "SY"
     if "Taiwan".lower() in textc:
@@ -606,8 +608,6 @@ def get_country_id(text):
         return "GB"
     if "United States Minor Outlying Islands".lower() in textc:
         return "UM"
-    if "United States".lower() in textc:
-        return "US"
     if "Uruguay".lower() in textc:
         return "UY"
     if "Uzbekistan".lower() in textc:
