@@ -189,15 +189,16 @@ class DatabaseOrganizer():
         self.db = DatabaseAccessor(db_path=db_path)
 
     def add_id_from_Authors_to_Papers(self):
-        stmt = select([self.db.Authors])
-        for author in self.db.connection.execute(stmt):
-                papers = [int(elem) for elem in author.Papers_id.split()]
-                for id in papers:
-                    try:
-                        self.db.insert_Paper(Id=id)
-                        print(str(id) + " added to Papers table ...")
-                    except:
-                        continue
+        stmt = "SELECT Papers_id FROM Authors"
+        results = self.db.connection.execute(stmt).fetchall()
+        for result in results:
+            papers_id_list = [int(elem) for elem in result[0].split()]
+            for id in papers_id_list:
+                try:
+                    self.db.insert_Paper(Id=id)
+                    print(str(id) + " added to Papers table ...")
+                except:
+                    print(str(id) + " is already in Papers table ...")
 
 
     def organize(self):
