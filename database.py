@@ -59,7 +59,7 @@ class DatabaseCreator:
                             Column('Id', Integer(),
                                    primary_key=True, nullable=False),
                             Column('Name', String(255)),
-                            Column('Address', Integer(), default=None),
+                            Column('Address', String(512), default=None),
                             Column('Country_id', String(2), default=None),
                             Column('Website', String(255), default=None),
                             Column('Papers_citeable', Integer(), default=None),
@@ -150,9 +150,20 @@ class DatabaseAccessor:
         stmt = insert(self.Papers).values(Id=Id)
         result = self.connection.execute(stmt)
 
+    def insert_Institution(self, Id, Name, Address, Website, Country_id, Papers_citeable):
+        stmt = insert(self.Institutions).values(Id=Id,
+                                                Name=Name,
+                                                Address=Address,
+                                                Website=Website,
+                                                Country_id=Country_id,
+                                                Papers_citeable=Papers_citeable)
+        result = self.connection.execute(stmt)
 
     def update_Author(self, Id, column_name, value):
         self.update("Authors", Id, column_name, value)
+
+    def update_Institution(self, Id, column_name, value):
+        self.update("Institutions", Id, column_name, value)
 
     def export_table_to_csv(self, table_name, path=WORKING_PATH):
         """exports a table with given name to csv file"""
