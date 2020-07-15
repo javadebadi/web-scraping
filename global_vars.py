@@ -39,7 +39,9 @@ else:
 
 DB_PATH = "sqlite:///" + WORKING_PATH + DB_NAME
 
-
+RESEARCH_AREAS = ["hep-ex", "hep-ph", "hep-th", "hep-lat", "qr-gc", "physics", "astro-ph",
+                 "nucl-ex", "nucl-th", "physics.ins-det", "physics.acc-ph",
+                 "quant-ph", "math-ph", "cond-mat", "math", "cs", "stat", "other", "nlin"]
 
 
 
