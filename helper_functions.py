@@ -115,6 +115,14 @@ def separate_affiliations_from_pos(text):
     else:
         return ''
 
+def get_research_areas(text):
+    """returns research areas avaibable in the text"""
+    research_areas = []
+    for area in RESEARCH_AREAS:
+        if area in text:
+            research_areas.append(area)
+    return research_areas
+
 def get_country_id(text):
     """returns country id from country name in the text,
     it is supposed the country's name is avaialable in text
@@ -127,7 +135,7 @@ def get_country_id(text):
 
     textc = text.lower().strip()
     if "United States".lower() in textc:
-        return "US" 
+        return "US"
     if "China".lower() in textc:
         return "CN"
     if "French Polynesia".lower() in textc:
