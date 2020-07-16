@@ -1,17 +1,4 @@
-# import packages
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-import time
-
-from global_vars import *
-from helper_functions import *
-from database import *
-
-# ***: remember to add other browsers or facilites to download
-
+from tools import *
 
 class AuthorCSSSelectors:
     def __init__(self):
@@ -150,7 +137,7 @@ class Author:
         self._get_affiliations_pos_year()
         self._fill_info()
 
-    def update_in_database(self, db):
+    def update_in_database(self, db=DB):
         self.finalize()
         for key, value in self.info.items():
             if key == 'id': # ignore id information from update
@@ -160,8 +147,7 @@ class Author:
             else:
                 db.update_Author(self.id, key, value)
 
-    def insert_to_database(self):
-        db = DatabaseAccessor()
+    def insert_to_database(self, db=DB):
         try:
             db.insert_Author(Id=self.id, Name=self.name,
                              Research_areas=self.research_areas,
@@ -169,8 +155,6 @@ class Author:
             print("Added {} with id = {} to authors table".format(self.name, self.id))
         except:
             print("Error in insertion of id = {}, ..., maybe already in database ...".format(self.id))
-
-        db.close()
 
     def __str__(self):
         s = "Authr info:\n"

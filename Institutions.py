@@ -4,11 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-import time
-
-from global_vars import *
-from helper_functions import *
-from database import *
+from tools import *
 
 
 class InstitutionCSSSelectors:
@@ -45,7 +41,7 @@ class Institution:
     def finalize(self):
         self._fill_info()
 
-    def update_in_database(self, db):
+    def update_in_database(self, db=DB):
         for key, value in self.info.items():
             if key == 'id': # ignore id information from update
                 continue
@@ -54,9 +50,8 @@ class Institution:
             else:
                 db.update_Institution(self.id, key, value)
 
-    def insert_to_database(self):
+    def insert_to_database(self, db=DB):
         self.finalize()
-        db = DatabaseAccessor()
         try:
             db.insert_Institution(Id=self.id, Name=self.name,
                                  Address=self.address, Website=self.website,
@@ -65,8 +60,6 @@ class Institution:
             print("Added {} with id = {} to institutions table".format(self.name, self.id))
         except:
             print("Error in insertion of id = {}, ..., maybe already in database ...".format(self.id))
-
-        db.close()
 
     def __str__(self):
         s = "Institutions info:\n"
