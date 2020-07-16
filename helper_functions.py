@@ -121,6 +121,7 @@ def get_research_areas(text):
     for area in RESEARCH_AREAS:
         if area in text:
             research_areas.append(area)
+    research_areas = str(research_areas).replace("[","").replace("]","").replace("'","").replace(",","").strip()
     return research_areas
 
 def get_country_id(text):
