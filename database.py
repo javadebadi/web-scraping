@@ -141,10 +141,12 @@ class DatabaseAccessor:
                              autoload=True, autoload_with=engine)
         self.connection = self.engine.connect()
 
-    def insert_Author(self, Id, Name):
-        stmt = insert(self.Authors).values(Id=Id, Name=Name)
+    def insert_Author(self, Id, Name, Research_areas, Experiments):
+        stmt = insert(self.Authors).values(Id=Id,
+                                           Name=Name,
+                                           Research_areas=Research_areas,
+                                           Experiments=Experiments)
         results = self.connection.execute(stmt)
-        print(results.rowcount)
 
     def insert_Paper(self, Id):
         stmt = insert(self.Papers).values(Id=Id)
