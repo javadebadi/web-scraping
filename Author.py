@@ -16,7 +16,7 @@ from database import *
 class AuthorCSSSelectors:
     def __init__(self):
         self.author_css = "#root > section > main > div.__Authors__ > div > div > div.ant-row.ant-row-space-between.mv3 > div > div > div > div > div.pa2 > div > "
-        self.full_name = self.author_css + "h2 > span"
+        self.name = self.author_css + "h2 > span"
         self.research_areas = self.author_css + "div.ant-row.ant-row-space-between > div.ant-col.mb3.ant-col-xs-24.ant-col-lg-12 > div.__InlineList__ > ul"
         self.affiliations_expand_button = self.author_css + "div.ant-row.ant-row-space-between > div:nth-child(2) > button"
         self.affiliations_css = self.author_css + "div.ant-row.ant-row-space-between > div:nth-child(2) > ul > li > div.ant-timeline-item-content > "
@@ -42,12 +42,14 @@ class Author:
     """
     class for authors
     """
-    def __init__(self, id=0, scrape_depth="name", full_name=""):
+    def __init__(self, id=0, scrape_depth="name", name="",
+                 experiments=None, research_areas=None):
         self.id = id
         self.scrape_depth = scrape_depth
-        self.full_name = full_name
+        self.name = name
+        self.experiments = experiments
         self.url = URL_AUTHORS + str(id)
-        self.research_areas = []
+        self.research_areas = research_areas
         self.affiliations_id = []
         self.affiliations_years = []
         self.affiliations_pos = []
@@ -104,7 +106,7 @@ class Author:
 
     def _fill_info(self):
         self.info["Id"] = self.id
-        self.info["Name"] = self.full_name
+        self.info["Name"] = self.name
         self.info["Scrape_depth"] = self.scrape_depth
         self.info['Research_areas'] = str(self.research_areas).replace("[","").replace("]","").replace("'","").replace(",","")
         self.info['Inspirehep'] = self.url
@@ -148,7 +150,8 @@ class Author:
         self._get_affiliations_pos_year()
         self._fill_info()
 
-    def _update_in_database(self, db):
+    def update_in_database(self, db):
+        self.finalize()
         for key, value in self.info.items():
             if key == 'id': # ignore id information from update
                 continue
@@ -158,21 +161,21 @@ class Author:
                 db.update_Author(self.id, key, value)
 
     def insert_to_database(self):
-        self.finalize()
         db = DatabaseAccessor()
         try:
-            db.insert_Author(Id=self.id, Name=self.full_name)
-            self._update_in_database(db)
+            db.insert_Author(Id=self.id, Name=self.name,
+                             Research_areas=self.research_areas,
+                             Experiments=self.experiments)
+            print("Added {} with id = {} to authors table".format(self.name, self.id))
         except:
-            print("Author with id = {} is already in database, doing update instead of insert ...".format(self.id))
-            self._update_in_database(db)
+            print("Error in insertion of id = {}, ..., maybe already in database ...".format(self.id))
 
         db.close()
 
     def __str__(self):
         s = "Authr info:\n"
         s += "id: " + str(self.id) + "\n"
-        s += "full name:" + str(self.full_name) + "\n"
+        s += "full name:" + str(self.name) + "\n"
         s += "research areas: " + str(self.research_areas) + "\n"
         s += "affiliations id :" + str(self.affiliations_id) + "\n"
         s += "affiliations years:" + str(self.affiliations_years) + "\n"
@@ -229,9 +232,9 @@ class AuthorScraper():
         else:
             return True
 
-    def get_full_name(self):
-        full_name = self.browser.find_element_by_css_selector(author_selector.full_name).text.split("(")[0].strip()
-        return full_name
+    def get_name(self):
+        name = self.browser.find_element_by_css_selector(author_selector.name).text.split("(")[0].strip()
+        return name
 
     def get_research_areas(self):
         try:
@@ -347,7 +350,7 @@ def scrape_author(author):
     if not scraper.author_exists():
         return
 
-    author.full_name = scraper.get_full_name()
+    author.name = scraper.get_name()
     author.research_areas = scraper.get_research_areas()
     if scrape_depth == 'name':
         scraper.close()
